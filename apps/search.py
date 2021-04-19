@@ -89,7 +89,7 @@ layout = html.Div([
                     dash_table.DataTable(
                         id='table',
                         columns=[
-                            {"name": i, "id": i, "deletable": True, "selectable": True} for i in df.columns
+                            {"name": i, "id": i} for i in df.columns
                         ],
                         data=df.to_dict('records'),
                         sort_action="native",
