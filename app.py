@@ -1,6 +1,7 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 import dash_table
 from dash.dependencies import Input, Output, State
 import plotly.express as px
@@ -8,11 +9,10 @@ import requests
 
 import pandas as pd
 
-#df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminderDataFiveYear.csv')
-
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(external_stylesheets = [dbc.themes.BOOTSTRAP])
+app.title = "Researcher Searcher - UoB Data Science Network"
 
 API_URL = "https://bdsn-api.mrcieu.ac.uk"
 
@@ -29,37 +29,59 @@ def search(text:str,method:str):
     )
     return df[['person_name','count','wa']]
 
-starter_query="graph databases"
+starter_query="graph database"
 starter_method="full"
 df  = search(text=starter_query,method=starter_method)
 
 def layout_function():
     return html.Div([
-        dcc.Input(id='input-1-state', type='text', value=starter_query),
-        dcc.Input(id='input-2-state', type='text', value=starter_method),
-        html.Button(id='submit-button-state', n_clicks=0, children='Submit'),
-        html.Div(id='output-state'),
-        #generate_table(df)
-        dash_table.DataTable(
-            id='table',
-            columns=[
-                {"name": i, "id": i, "deletable": True, "selectable": True} for i in df.columns
-            ],
-            data=df.to_dict('records'),
-            #editable=True,
-            #filter_action="native",
-            sort_action="native",
-            sort_mode="multi",
-            #column_selectable="single",
-            #row_selectable="multi",
-            row_deletable=False,
-            #selected_columns=[],
-            #selected_rows=[],
-            page_action="native",
-            page_current= 0,
-            page_size= 10,
-        ),
-        html.Div(id='datatable-interactivity-container')
+        dbc.Container([
+            dbc.Row([
+                html.H1('Researcher Searcher - UoB Data Science Network'),
+            ]),
+            html.Br(),
+            dbc.Row([
+                dbc.Col([
+                    html.Label('Query:'),
+                    dbc.Input(id='input-1-state', type='text', value=starter_query),
+                ]),
+                dbc.Col([
+                    html.Label('Method'),
+                    dcc.Dropdown(
+                        options=[
+                            {'label': 'Full text search', 'value': 'full'},
+                            {'label': 'Vector search', 'value': 'vec'},
+                            {'label': 'Person search', 'value': 'person'},
+                            {'label': 'Output search', 'value': 'output'}
+                        ],
+                        value='full',
+                        id='input-2-state'
+                    ),
+                ]),
+                dbc.Col([
+                    html.Br(),
+                    html.Button(id='submit-button-state', n_clicks=0, children='Submit'),
+                ])
+            ]),
+            dbc.Row([
+                dbc.Col([
+                    html.Br(),
+                    dash_table.DataTable(
+                        id='table',
+                        columns=[
+                            {"name": i, "id": i, "deletable": True, "selectable": True} for i in df.columns
+                        ],
+                        data=df.to_dict('records'),
+                        sort_action="native",
+                        sort_mode="multi",
+                        page_action="native",
+                        page_current= 0,
+                        page_size= 10,
+                    ),
+                    html.Div(id='datatable-interactivity-container')
+                ])
+            ])
+        ])
     ])
 
 app.layout = layout_function

@@ -2,3 +2,5 @@ dash
 jupyter-dash
 pandas
 requests
+dash-bootstrap-components
+
