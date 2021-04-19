@@ -17,3 +17,4 @@ navbar = dbc.NavbarSimple(
 )
 
 server = app.server
+app.config.suppress_callback_exceptions = True
