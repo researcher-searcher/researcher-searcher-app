@@ -27,7 +27,8 @@ def search(text:str,method:str):
     df = (
         pd.json_normalize(r.json()["res"])
     )
-    return df[['person_name','count','wa']]
+    df['org'] = df['org'].str[:1]
+    return df[['person_name','count','org','wa']]
 
 starter_query="graph database"
 starter_method="full"
@@ -43,10 +44,17 @@ def layout_function():
             dbc.Row([
                 dbc.Col([
                     html.Label('Query:'),
-                    dbc.Input(id='input-1-state', type='text', value=starter_query),
+                    dbc.Textarea(
+                        id='input-1-state', 
+                        value=starter_query,
+                        style={'width': '100%', 'height': 100}
+                    )
                 ]),
+            ]),
+            html.Br(),
+            dbc.Row([
                 dbc.Col([
-                    html.Label('Method'),
+                    html.Label('Method:'),
                     dcc.Dropdown(
                         options=[
                             {'label': 'Full text search', 'value': 'full'},
@@ -90,9 +98,8 @@ app.layout = layout_function
               Input('submit-button-state', 'n_clicks'),
               State('input-1-state', 'value'),
               State('input-2-state', 'value'),
-              State("table","data")
               )
-def run_search(n_clicks, input1, input2, table_data):
+def run_search(n_clicks, input1, input2):
     df = search(text=input1,method=input2)
     return df.to_dict('records')
 
