@@ -56,6 +56,8 @@ layout = html.Div([
             dbc.Row([
                 dbc.Col([
                     html.H5('Query:'),
+                    html.P('Examples: '),
+                    html.P(id='eg1',children='machine learning'),
                     dbc.Textarea(
                         id='input-1-state', 
                         value=starter_query,
