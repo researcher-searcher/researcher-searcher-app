@@ -14,7 +14,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(external_stylesheets = [dbc.themes.BOOTSTRAP])
 app.title = "Researcher Searcher - UoB Data Science Network"
 
-app.layout = html.Div([
+layout = html.Div([
         navbar,
         dbc.Container([
             html.Br(),

@@ -33,7 +33,7 @@ def api_search(text:str,method:str):
     else:
         return df
 
-starter_query="graph database"
+starter_query="logistic regression"
 starter_method="full"
 df  = api_search(text=starter_query,method=starter_method)
 
@@ -49,8 +49,7 @@ navbar = dbc.NavbarSimple(
     dark=True,
 )
 
-def layout_function():
-    return html.Div([
+layout = html.Div([
         navbar,
         dbc.Container([
             html.Br(),
@@ -104,10 +103,3 @@ def layout_function():
             ])
         ])
     ])
-
-app.layout = layout_function
-
-
-
-#if __name__ == '__main__':
-#    app.run_server(debug=True)

@@ -17,12 +17,11 @@ app.layout = html.Div([
 def display_page(pathname):
     print(pathname)
     if pathname == '/search':
-        #print(search.app.layout())
-        return search.app.layout()
+        return search.layout
     #elif pathname == '/apps/app2':
     #    return app2.layout
     else:
-        return home.app.layout
+        return home.layout
 
 # callback for search page
 @app.callback(Output('table', 'data'),
