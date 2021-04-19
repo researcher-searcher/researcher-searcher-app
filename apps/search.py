@@ -16,7 +16,7 @@ app.title = "Researcher Searcher - UoB Data Science Network"
 
 API_URL = "https://bdsn-api.mrcieu.ac.uk"
 
-def search(text:str,method:str):
+def api_search(text:str,method:str):
     endpoint = "/search/"
     url = f"{API_URL}{endpoint}"
     params = {
@@ -27,12 +27,15 @@ def search(text:str,method:str):
     df = (
         pd.json_normalize(r.json()["res"])
     )
-    df['org'] = df['org'].str[:1]
-    return df[['person_name','count','org','wa']]
+    if not df.empty:
+        df['org'] = df['org'].str[:1]
+        return df[['person_name','count','org','wa']]
+    else:
+        return df
 
 starter_query="graph database"
 starter_method="full"
-df  = search(text=starter_query,method=starter_method)
+df  = api_search(text=starter_query,method=starter_method)
 
 navbar = dbc.NavbarSimple(
     children=[
@@ -104,14 +107,6 @@ def layout_function():
 
 app.layout = layout_function
 
-@app.callback(Output('table', 'data'),
-              Input('submit-button-state', 'n_clicks'),
-              State('input-1-state', 'value'),
-              State('input-2-state', 'value'),
-              )
-def run_search(n_clicks, input1, input2):
-    df = search(text=input1,method=input2)
-    return df.to_dict('records')
 
 
 #if __name__ == '__main__':
