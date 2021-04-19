@@ -34,16 +34,26 @@ starter_query="graph database"
 starter_method="full"
 df  = search(text=starter_query,method=starter_method)
 
+navbar = dbc.NavbarSimple(
+    children=[
+        dbc.NavItem(dbc.NavLink("Search", href="/")),
+        dbc.NavItem(dbc.NavLink("Person", href="person")),
+        dbc.NavItem(dbc.NavLink("Collaboration", href="collaboration")),
+    ],
+    brand="Researcher Searcher - UoB Data Science Network",
+    brand_href="/",
+    color="primary",
+    dark=True,
+)
+
 def layout_function():
     return html.Div([
+        navbar,
         dbc.Container([
-            dbc.Row([
-                html.H1('Researcher Searcher - UoB Data Science Network'),
-            ]),
             html.Br(),
             dbc.Row([
                 dbc.Col([
-                    html.Label('Query:'),
+                    html.H5('Query:'),
                     dbc.Textarea(
                         id='input-1-state', 
                         value=starter_query,
@@ -54,7 +64,7 @@ def layout_function():
             html.Br(),
             dbc.Row([
                 dbc.Col([
-                    html.Label('Method:'),
+                    html.H5 ('Method:'),
                     dcc.Dropdown(
                         options=[
                             {'label': 'Full text search', 'value': 'full'},
