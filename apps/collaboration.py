@@ -29,6 +29,7 @@ layout = html.Div([
                         value=starter_query                    )
                 ]),
             ]),
+            html.Br(),
             dbc.Row([
                 dbc.Col([
                     html.H5 ('Method:'),
@@ -43,7 +44,7 @@ layout = html.Div([
                 ]),
                 dbc.Col([
                     html.Br(),
-                    html.Button(id='collab-button-state', n_clicks=0, children='Submit'),
+                    html.Button(id='collab-submit-button-state', n_clicks=0, children='Submit'),
                 ])
             ]),
             dbc.Row([

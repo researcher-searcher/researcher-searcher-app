@@ -16,7 +16,8 @@ def api_search(text:str,method:str='full'):
     )
     if not df.empty:
         df['org'] = df['org'].str[:1]
-        return df[['person_name','count','org','wa']]
+        print(df.shape)
+        return df[['person_name','email','count','org','wa']]
     else:
         return df
 
@@ -46,12 +47,13 @@ def api_collab(text:str,method:str='no'):
     df = (
         pd.json_normalize(r.json()["res"])
     )
-    print(df.shape)
+    res = df
     if not df.empty:
         df['org'] = df['org'].str[:1]
         df['score'] = df['score'].round(4)
-        return df[['name','org','score']]
+        print(df.shape)
+        return df[['name','email','org','score']]
     else:
         return df
-    return df
+
 
