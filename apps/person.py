@@ -5,18 +5,16 @@ import dash_bootstrap_components as dbc
 import dash_table
 from dash.dependencies import Input, Output, State
 from app import app, navbar
-from functions import api_search
+from functions import api_person
 
 app = dash.Dash(external_stylesheets = [dbc.themes.BOOTSTRAP])
 app.title = "Researcher Searcher - UoB Data Science Network"
 
 # API globals
-API_URL = "https://bdsn-api.mrcieu.ac.uk"
-starter_query="logistic regression"
-starter_method="full"
+starter_query="jean.golding@bristol.ac.uk"
 
 # get some data to start with
-df  = api_search(text=starter_query,method=starter_method)
+df  = api_person(text=starter_query)
 
 layout = html.Div([
         navbar,
@@ -25,40 +23,23 @@ layout = html.Div([
             dbc.Row([
                 dbc.Col([
                     html.H5('Query:'),
-                    #html.P('Examples: '),
-                    #html.Span(id='eg1',children='machine learning'),
-                    dbc.Textarea(
-                        id='search-input-1-state', 
-                        value=starter_query,
-                        style={'width': '100%', 'height': 100}
-                    )
+                    dbc.Input(
+                        id='person-input-1-state', 
+                        type='text',
+                        value=starter_query                    )
                 ]),
             ]),
-            html.Br(),
             dbc.Row([
                 dbc.Col([
-                    html.H5 ('Method:'),
-                    dcc.Dropdown(
-                        options=[
-                            {'label': 'Full text search', 'value': 'full'},
-                            {'label': 'Vector search', 'value': 'vec'},
-                            {'label': 'Person search', 'value': 'person'},
-                            {'label': 'Output search', 'value': 'output'}
-                        ],
-                        value='full',
-                        id='search-input-2-state'
-                    ),
-                ]),
-                dbc.Col([
                     html.Br(),
-                    html.Button(id='search-submit-button-state', n_clicks=0, children='Submit'),
+                    html.Button(id='person-submit-button-state', n_clicks=0, children='Submit'),
                 ])
             ]),
             dbc.Row([
                 dbc.Col([
                     html.Br(),
                     dash_table.DataTable(
-                        id='search-table',
+                        id='person-table',
                         columns=[
                             {"name": i, "id": i} for i in df.columns
                         ],
