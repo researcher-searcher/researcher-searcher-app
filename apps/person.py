@@ -49,8 +49,8 @@ layout = html.Div([
                         page_action="native",
                         page_current= 0,
                         page_size= 10,
+                        export_format="csv"
                     ),
-                    html.Div(id='datatable-interactivity-container')
                 ])
             ])
         ])

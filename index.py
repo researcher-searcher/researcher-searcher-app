@@ -53,6 +53,5 @@ def run_collab(n_clicks, input1, input2):
     df = api_collab(text=input1,method=input2)
     return df.to_dict('records')
 
-
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(host='0.0.0.0',debug=False)
