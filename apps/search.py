@@ -62,13 +62,22 @@ layout = html.Div([
                         columns=[
                             {"name": i, "id": i} for i in df.columns
                         ],
+                        style_cell={
+                            'overflow': 'hidden',
+                            'textOverflow': 'ellipsis',
+                            'maxWidth': 0
+                        },
+                        style_cell_conditional=[
+                            {'if': {'column_id': 'Title'},
+                            'width': '80%'}
+                        ],
                         data=df.to_dict('records'),
                         sort_action="native",
                         sort_mode="multi",
                         page_action="native",
                         page_current= 0,
                         page_size= 10,
-                        export_format="csv",
+                        export_format="csv"
                     ) 
                 ])
             ])

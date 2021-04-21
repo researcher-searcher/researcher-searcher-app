@@ -2,9 +2,10 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from apps.search import api_search
-from functions import api_search, api_person, api_collab
+from functions import api_search, api_search_person, api_search_output, api_person, api_collab
 from app import app, server
 from apps import home, search, person, collaboration
+from loguru import logger
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
@@ -26,13 +27,25 @@ def display_page(pathname):
 
 # callback for search page
 @app.callback(Output('search-table', 'data'),
+              Output('search-table', 'columns'),
               Input('search-submit-button-state', 'n_clicks'),
               State('search-input-1-state', 'value'),
               State('search-input-2-state', 'value'),
               )
 def run_search(n_clicks, input1, input2):
-    df = api_search(text=input1,method=input2)
-    return df.to_dict('records')
+    logger.info(f'{input1} {input2}') 
+    if input2 in ['full','vec']:
+        df = api_search(text=input1,method=input2)
+    elif input2 == 'person':
+        df = api_search_person(text=input1)
+    elif input2 == 'output':
+        df = api_search_output(text=input1)
+    columns=[
+            {"name": i, "id": i} for i in df.columns
+        ]
+    logger.debug(columns)
+    return df.to_dict('records'), columns
+    
 
 # callback for person page
 @app.callback(Output('person-table', 'data'),
@@ -54,4 +67,4 @@ def run_collab(n_clicks, input1, input2):
     return df.to_dict('records')
 
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0',debug=False)
+    app.run_server(host='0.0.0.0',debug=True)
