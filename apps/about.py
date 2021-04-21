@@ -25,16 +25,16 @@ layout = html.Div([
 
                     ##### 4 methods:
                     
-                    1. **Full text:** Query test is split into sentences. 
+                    1. **Full text:** Query text is split into sentences. 
                     Each sentence is queried against each title/abstract sentences using the 
                     Elasticsearch full text method (limit top 100).  Weighted average returned for 
-                    each person using score and rank
+                    each person using score and rank.
                     
-                    2. **Vector:** Query test is split into sentences. 
+                    2. **Vector:** Query text is split into sentences. 
                     A vector representation of each sentence is created then 
                     compared to the vectors of all title/abstract sentences 
                     using cosine distance (limit top 100).  Weighted average 
-                    returned for each person using distance and rank
+                    returned for each person using distance and rank.
                     
                     3. **Person:** Query text is treated as single document 
                     and a single vector is created. This is compared to each 
