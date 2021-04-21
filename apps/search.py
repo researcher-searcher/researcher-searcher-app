@@ -51,7 +51,8 @@ layout = html.Div([
                 ]),
                 dbc.Col([
                     html.Br(),
-                    html.Button(id='search-submit-button-state', n_clicks=0, children='Submit'),
+                    html.Button(id='search-submit-button-state', n_clicks=0, children='Submit',style={"padding": "10px"}),
+                    
                 ])
             ]),
             dbc.Row([
