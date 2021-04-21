@@ -12,10 +12,7 @@ import pandas as pd
 from app import app, navbar
 from loguru import logger
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-
 app = dash.Dash(external_stylesheets = [dbc.themes.BOOTSTRAP])
-app.title = "Researcher Searcher - UoB Data Science Network"
 
 df = pd.read_csv('data/tsne.csv.gz')
 df.drop_duplicates(inplace=True)

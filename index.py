@@ -4,7 +4,7 @@ from dash.dependencies import Input, Output, State
 from apps.search import api_search
 from functions import api_search, api_search_person, api_search_output, api_person, api_collab
 from app import app, server
-from apps import home, search, person, collaboration
+from apps import home, search, person, collaboration, about
 from loguru import logger
 
 app.layout = html.Div([
@@ -22,6 +22,8 @@ def display_page(pathname):
         return person.layout
     elif pathname == '/collaboration':
         return collaboration.layout
+    elif pathname == '/about':
+        return about.layout
     else:
         return home.layout
 

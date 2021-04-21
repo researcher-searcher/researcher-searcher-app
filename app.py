@@ -10,6 +10,7 @@ navbar = dbc.NavbarSimple(
         dbc.NavItem(dbc.NavLink("Search", href="search")),
         dbc.NavItem(dbc.NavLink("Person", href="person")),
         dbc.NavItem(dbc.NavLink("Collaboration", href="collaboration")),
+        dbc.NavItem(dbc.NavLink("About", href="about")),
     ],
     brand="Researcher Searcher - UoB Data Science Network",
     brand_href="/",
