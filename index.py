@@ -3,7 +3,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from apps.search import api_search
 from functions import api_search, api_person, api_collab
-from app import app
+from app import app, server
 from apps import home, search, person, collaboration
 
 app.layout = html.Div([
