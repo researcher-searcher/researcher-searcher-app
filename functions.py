@@ -131,4 +131,19 @@ def api_collab(text:str,method:str='no'):
     else:
         return df
 
+def api_vector(text:str,method:str='sent'):
+    logger.debug(f'api_vector {text} {method}')
+    endpoint = "/vector/"
+    url = f"{API_URL}{endpoint}"
+    params = {
+        "query": text,
+        "method": method
+    }
+    r = requests.get(url, params=params)
+    return r.json()["res"]
+    #df = (
+    #    pd.json_normalize(r.json()["res"])
+    #)
+    #return df
+
 

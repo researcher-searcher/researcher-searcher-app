@@ -5,4 +5,5 @@ requests
 dash-bootstrap-components
 loguru
 gunicorn
+sklearn
 
