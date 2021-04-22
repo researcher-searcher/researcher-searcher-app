@@ -1,6 +1,10 @@
 import requests
 import pandas as pd
+import plotly.express as px
 from loguru import logger
+from sklearn.manifold import TSNE
+from scipy.spatial import distance
+import numpy as np
 
 API_URL = "https://bdsn-api.mrcieu.ac.uk"
 
@@ -146,4 +150,108 @@ def api_vector(text:str,method:str='sent'):
     #)
     #return df
 
+def plotly_scatter_plot(df,top=12):
+    df = df[(df['org_count']>top) | (df['origin']=='query')]
+    fig = px.scatter(
+        df, 
+        x="x", 
+        y="y", 
+        color="org-name",
+        symbol="org-name",
+        hover_data=['email']
+        )
+    fig.update_layout(legend_title_text=f'Organisation (>{top} people)')
+    return fig
+
+def run_tsne(query:str='data science'):
+    PEOPLE_PAIRS = 'data/people_vector_pairs.pkl.gz'
+    TSNE_DF = 'data/tsne.pkl.gz'
+
+
+    pp_df=pd.read_pickle(PEOPLE_PAIRS)
+    logger.info(pp_df.shape)
+    summary_df = pd.read_pickle(TSNE_DF)
+    summary_df['origin']='people'
+    logger.info(f'\n{summary_df.head()}')
+
+    vec_data = api_vector(text=query)
+    
+    #logger.info(vec_data)
+    vec_list=[]
+    sent_list = []
+    for v in vec_data:
+        #logger.info(v)
+        vec_list.append(v['vector'])
+        sent_list.append(v['q_sent_text'])
+
+        # add some more info to new data
+        v['origin']='query'
+        v['x']=0
+        v['y']=0
+        v['org-name']=v['q_sent_text']
+    vec_df = pd.DataFrame(vec_data)
+    #vec_df['org-name']=vec_df['q_sent_text']
+    vec_df['email']=vec_df['org-name']
+    #vec_df.rename(columns={'q_sent_text':'na'},inplace=True)
+    logger.info(f'\n{vec_df.head()}')
+    # add to existing
+    summary_df = summary_df.append(vec_df)
+    logger.info(f'\n{summary_df.head()}')
+
+    
+    v1 = vec_list
+    v2 = list(summary_df['vector'])
+    v2_text = list(summary_df['email'])
+    logger.info(f'{np.array(v1).shape} {np.array(v2).shape}')
+    
+    aaa = distance.cdist(v1, v2, 'cosine')
+    new_data = []
+    vcount=0
+    for v in vec_data:
+        for i in range(len(aaa[vcount])):
+            new_data.append({
+                'email1':v['q_sent_text'],
+                'email2':v2_text[i],
+                'score':aaa[vcount][i]
+            })
+        vcount+=1
+    logger.info(new_data[0])
+
+    new_df = pd.DataFrame(new_data)
+    logger.info(pp_df.shape)
+    pp_df = pd.concat([pp_df, new_df])
+    logger.info(pp_df.shape)
+    
+    tSNE=TSNE(n_components=2)
+
+    email_check = list(summary_df['email']) + sent_list
+
+    # this filtering is due to some email addresses dropping out with org filter in aaa.py
+    pp_df = pp_df[(pp_df['email1'].isin(email_check)) & (pp_df['email2'].isin(email_check))]
+    logger.info(pp_df.shape)
+
+    #logger.info(df.head())
+    pp_df_pivot = pp_df.pivot(index='email1', columns='email2', values='score')
+    logger.info(pp_df_pivot.shape)
+    pp_df_pivot = pp_df_pivot.fillna(1)
+    tSNE_result=tSNE.fit_transform(pp_df_pivot)
+    x=tSNE_result[:,0]
+    y=tSNE_result[:,1]
+
+    summary_df['x']=x
+    summary_df['y']=y
+    logger.info(summary_df.shape)
+
+    #summary_df.drop_duplicates(inplace=True)
+    org_counts = summary_df['org-name'].value_counts()
+
+    # filter df to top X for plot
+    summary_df['org_count']= summary_df['org-name'].map(org_counts)
+    summary_df['org-name'] = summary_df['org-name'].astype(str)+' '+summary_df['org_count'].astype(str)
+
+    logger.info(f'\n{org_counts}')
+    logger.info(f'\n{summary_df}')
+
+    fig = plotly_scatter_plot(summary_df)
+    return fig
 

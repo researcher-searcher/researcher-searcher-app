@@ -2,7 +2,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from apps.search import api_search
-from functions import api_search, api_search_person, api_search_output, api_person, api_collab
+from functions import api_search, api_search_person, api_search_output, api_person, api_collab, run_tsne
 from app import app, server
 from apps import home, search, person, collaboration, about
 from loguru import logger
@@ -67,6 +67,15 @@ def run_person(n_clicks, input1):
 def run_collab(n_clicks, input1, input2):
     df = api_collab(text=input1,method=input2)
     return df.to_dict('records')
+
+# callback for home page
+@app.callback(Output('home-fig', 'figure'),
+              Input('home-submit-button-state', 'n_clicks'),
+              State('home-input-1-state', 'value'),
+              )
+def update_plot(n_clicks, input1):
+    fig = run_tsne(query=input1)
+    return fig
 
 if __name__ == '__main__':
     app.run_server(host='0.0.0.0',debug=True)
