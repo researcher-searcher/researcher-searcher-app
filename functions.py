@@ -204,8 +204,6 @@ def run_tsne(query:str='data science'):
     # parse cosine data 
     new_data = []
     vcount=0
-    logger.info(len(aaa[vcount]))
-    logger.info(len(v2_text))
     for v in vec_data:
         for i in range(len(aaa[vcount])):
             new_data.append({
@@ -213,14 +211,14 @@ def run_tsne(query:str='data science'):
                 'email2':v2_text[i],
                 'score':1-aaa[vcount][i]
             }),
-            #new_data.append({
-            #    'email2':v['q_sent_text'],
-            #    'email1':v2_text[i],
-            #    'score':aaa[vcount][i]
-            #}),
+            new_data.append({
+                'email2':v['q_sent_text'],
+                'email1':v2_text[i],
+                'score':1-aaa[vcount][i]
+            }),
         vcount+=1
-    # cosine distance for each query
-    
+
+    # cosine distance for each query against query
     for i in range(len(vec_data)):
         for j in range(len(vec_data)):
             cos = distance.cosine(vec_data[i]['vector'],vec_data[j]['vector'])
@@ -230,48 +228,35 @@ def run_tsne(query:str='data science'):
                     'email2':vec_data[j]['q_sent_text'],
                     'score':1-cos
                 }),
-    #logger.info(new_data)
 
     # create new df with cosine results and add to pairwise df
     new_df = pd.DataFrame(new_data)
-    logger.info(new_df.shape)
-    logger.info(new_df.tail())
-    logger.info(pp_df.shape)
     pp_df = pd.concat([pp_df, new_df])
-    logger.info(pp_df.shape)
-    logger.info(pp_df.head())
-    logger.info(pp_df.tail())
     
     tSNE=TSNE(n_components=2)
 
     # add query data to summary_df
     vec_df = pd.DataFrame(vec_data)
-    #vec_df['org-name']=vec_df['q_sent_text']
     vec_df['email']=vec_df['org-name']
-    #vec_df.rename(columns={'q_sent_text':'na'},inplace=True)
-    logger.info(f'\n{vec_df.head()}')
     # add to existing
     summary_df = pd.concat([summary_df,vec_df])
-    logger.info(f'\n{summary_df.head()}')
+    #sort by email to match up with pivot table
+    summary_df = summary_df.sort_values(by='email')
 
     # this filtering is due to some email addresses dropping out with org filter in aaa.py
     email_check = list(summary_df['email']) + sent_list
     pp_df = pp_df[(pp_df['email1'].isin(email_check)) & (pp_df['email2'].isin(email_check))]
-    logger.info(pp_df.shape)
+    pp_df.to_csv('a_max.csv',index=False)
 
-    #logger.info(df.head())
     pp_df_pivot = pp_df.pivot(index='email1', columns='email2', values='score')
-    logger.info(pp_df_pivot.shape)
     pp_df_pivot = pp_df_pivot.fillna(1)
+    pp_df_pivot.to_csv('pivot_min.csv',index=False)
     tSNE_result=tSNE.fit_transform(pp_df_pivot)
-    logger.info(tSNE_result[:,0].shape)
     x=tSNE_result[:,0]
     y=tSNE_result[:,1]
 
     summary_df['x']=x
     summary_df['y']=y
-    logger.info(summary_df.shape)
-    logger.info(summary_df.tail)
 
     #summary_df.drop_duplicates(inplace=True)
     org_counts = summary_df['org-name'].value_counts()
