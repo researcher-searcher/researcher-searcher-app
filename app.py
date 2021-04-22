@@ -11,6 +11,7 @@ navbar = dbc.NavbarSimple(
         dbc.NavItem(dbc.NavLink("Person", href="person")),
         dbc.NavItem(dbc.NavLink("Collaboration", href="collaboration")),
         dbc.NavItem(dbc.NavLink("About", href="about")),
+        dbc.NavItem(dbc.NavLink("API", href="https://bdsn-api.mrcieu.ac.uk")),
     ],
     brand="Researcher Searcher - UoB Data Science Network",
     brand_href="/",
