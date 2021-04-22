@@ -167,16 +167,19 @@ def run_tsne(query:str='data science'):
     PEOPLE_PAIRS = 'data/people_vector_pairs.pkl.gz'
     TSNE_DF = 'data/tsne.pkl.gz'
 
-
+    # read in pair-pair data 
     pp_df=pd.read_pickle(PEOPLE_PAIRS)
     logger.info(pp_df.shape)
+
+    # read in pre-calculated tsne data
     summary_df = pd.read_pickle(TSNE_DF)
     summary_df['origin']='people'
     logger.info(f'\n{summary_df.head()}')
 
+    # get vectors for query
     vec_data = api_vector(text=query)
     
-    #logger.info(vec_data)
+    # parse vector query results
     vec_list=[]
     sent_list = []
     for v in vec_data:
@@ -189,22 +192,15 @@ def run_tsne(query:str='data science'):
         v['x']=0
         v['y']=0
         v['org-name']=v['q_sent_text']
-    vec_df = pd.DataFrame(vec_data)
-    #vec_df['org-name']=vec_df['q_sent_text']
-    vec_df['email']=vec_df['org-name']
-    #vec_df.rename(columns={'q_sent_text':'na'},inplace=True)
-    logger.info(f'\n{vec_df.head()}')
-    # add to existing
-    summary_df = summary_df.append(vec_df)
-    logger.info(f'\n{summary_df.head()}')
-
     
+    # create two lists of vectors to run cosine on
     v1 = vec_list
     v2 = list(summary_df['vector'])
     v2_text = list(summary_df['email'])
     logger.info(f'{np.array(v1).shape} {np.array(v2).shape}')
-    
     aaa = distance.cdist(v1, v2, 'cosine')
+
+    # parse cosine data 
     new_data = []
     vcount=0
     for v in vec_data:
@@ -215,18 +211,29 @@ def run_tsne(query:str='data science'):
                 'score':aaa[vcount][i]
             })
         vcount+=1
-    logger.info(new_data[0])
+    logger.info(new_data)
 
+    # create new df with cosine results and add to pairwise df
     new_df = pd.DataFrame(new_data)
     logger.info(pp_df.shape)
     pp_df = pd.concat([pp_df, new_df])
     logger.info(pp_df.shape)
+    logger.info(pp_df.tail())
     
     tSNE=TSNE(n_components=2)
 
-    email_check = list(summary_df['email']) + sent_list
+    # add query data to summary_df
+    vec_df = pd.DataFrame(vec_data)
+    #vec_df['org-name']=vec_df['q_sent_text']
+    vec_df['email']=vec_df['org-name']
+    #vec_df.rename(columns={'q_sent_text':'na'},inplace=True)
+    logger.info(f'\n{vec_df.head()}')
+    # add to existing
+    summary_df = pd.concat([summary_df,vec_df])
+    logger.info(f'\n{summary_df.head()}')
 
     # this filtering is due to some email addresses dropping out with org filter in aaa.py
+    email_check = list(summary_df['email']) + sent_list
     pp_df = pp_df[(pp_df['email1'].isin(email_check)) & (pp_df['email2'].isin(email_check))]
     logger.info(pp_df.shape)
 
@@ -241,6 +248,7 @@ def run_tsne(query:str='data science'):
     summary_df['x']=x
     summary_df['y']=y
     logger.info(summary_df.shape)
+    logger.info(summary_df.tail)
 
     #summary_df.drop_duplicates(inplace=True)
     org_counts = summary_df['org-name'].value_counts()
