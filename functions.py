@@ -169,7 +169,6 @@ def run_tsne(query:str='data science'):
 
     # read in pair-pair data 
     pp_df=pd.read_pickle(PEOPLE_PAIRS)
-    logger.info(pp_df.shape)
 
     # read in pre-calculated tsne data
     summary_df = pd.read_pickle(TSNE_DF)
@@ -177,22 +176,26 @@ def run_tsne(query:str='data science'):
     logger.info(f'\n{summary_df.head()}')
 
     # get vectors for query
-    vec_data = api_vector(text=query)
+    vec_res = api_vector(text=query)
     
     # parse vector query results
     vec_list=[]
     sent_list = []
-    for v in vec_data:
-        #logger.info(v)
+    vec_data = []
+    for v in vec_res:
         vec_list.append(v['vector'])
         sent_list.append(v['q_sent_text'])
 
         # add some more info to new data
-        v['origin']='query'
-        v['x']=0
-        v['y']=0
-        v['org-name']=v['q_sent_text']
-    
+        vec_data.append({
+            'origin':'query',
+            'x':0,
+            'y':0,
+            'org-name':'query',
+            'email':v['q_sent_text']
+        })
+
+    logger.info(vec_data)
     # create two lists of vectors to run cosine on
     v1 = vec_list
     v2 = list(summary_df['vector'])
@@ -204,7 +207,7 @@ def run_tsne(query:str='data science'):
     # parse cosine data 
     new_data = []
     vcount=0
-    for v in vec_data:
+    for v in vec_res:
         for i in range(len(aaa[vcount])):
             new_data.append({
                 'email1':v['q_sent_text'],
@@ -217,15 +220,15 @@ def run_tsne(query:str='data science'):
                 'score':1-aaa[vcount][i]
             }),
         vcount+=1
-
+    logger.info(new_data)
     # cosine distance for each query against query
-    for i in range(len(vec_data)):
-        for j in range(len(vec_data)):
-            cos = distance.cosine(vec_data[i]['vector'],vec_data[j]['vector'])
+    for i in range(len(vec_res)):
+        for j in range(len(vec_res)):
+            cos = distance.cosine(vec_res[i]['vector'],vec_res[j]['vector'])
             logger.info(f'{i} {j} {1-cos}')
             new_data.append({
-                    'email1':vec_data[i]['q_sent_text'],
-                    'email2':vec_data[j]['q_sent_text'],
+                    'email1':vec_res[i]['q_sent_text'],
+                    'email2':vec_res[j]['q_sent_text'],
                     'score':1-cos
                 }),
 
@@ -237,7 +240,7 @@ def run_tsne(query:str='data science'):
 
     # add query data to summary_df
     vec_df = pd.DataFrame(vec_data)
-    vec_df['email']=vec_df['org-name']
+    #vec_df['email']=vec_df['org-name']
     # add to existing
     summary_df = pd.concat([summary_df,vec_df])
     #sort by email to match up with pivot table
@@ -246,11 +249,9 @@ def run_tsne(query:str='data science'):
     # this filtering is due to some email addresses dropping out with org filter in aaa.py
     email_check = list(summary_df['email']) + sent_list
     pp_df = pp_df[(pp_df['email1'].isin(email_check)) & (pp_df['email2'].isin(email_check))]
-    pp_df.to_csv('a_max.csv',index=False)
 
     pp_df_pivot = pp_df.pivot(index='email1', columns='email2', values='score')
     pp_df_pivot = pp_df_pivot.fillna(1)
-    pp_df_pivot.to_csv('pivot_min.csv',index=False)
     tSNE_result=tSNE.fit_transform(pp_df_pivot)
     x=tSNE_result[:,0]
     y=tSNE_result[:,1]
