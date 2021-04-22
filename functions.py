@@ -200,24 +200,46 @@ def run_tsne(query:str='data science'):
     logger.info(f'{np.array(v1).shape} {np.array(v2).shape}')
     aaa = distance.cdist(v1, v2, 'cosine')
 
+
     # parse cosine data 
     new_data = []
     vcount=0
+    logger.info(len(aaa[vcount]))
+    logger.info(len(v2_text))
     for v in vec_data:
         for i in range(len(aaa[vcount])):
             new_data.append({
                 'email1':v['q_sent_text'],
                 'email2':v2_text[i],
-                'score':aaa[vcount][i]
-            })
+                'score':1-aaa[vcount][i]
+            }),
+            #new_data.append({
+            #    'email2':v['q_sent_text'],
+            #    'email1':v2_text[i],
+            #    'score':aaa[vcount][i]
+            #}),
         vcount+=1
-    logger.info(new_data)
+    # cosine distance for each query
+    
+    for i in range(len(vec_data)):
+        for j in range(len(vec_data)):
+            cos = distance.cosine(vec_data[i]['vector'],vec_data[j]['vector'])
+            logger.info(f'{i} {j} {1-cos}')
+            new_data.append({
+                    'email1':vec_data[i]['q_sent_text'],
+                    'email2':vec_data[j]['q_sent_text'],
+                    'score':1-cos
+                }),
+    #logger.info(new_data)
 
     # create new df with cosine results and add to pairwise df
     new_df = pd.DataFrame(new_data)
+    logger.info(new_df.shape)
+    logger.info(new_df.tail())
     logger.info(pp_df.shape)
     pp_df = pd.concat([pp_df, new_df])
     logger.info(pp_df.shape)
+    logger.info(pp_df.head())
     logger.info(pp_df.tail())
     
     tSNE=TSNE(n_components=2)
@@ -242,6 +264,7 @@ def run_tsne(query:str='data science'):
     logger.info(pp_df_pivot.shape)
     pp_df_pivot = pp_df_pivot.fillna(1)
     tSNE_result=tSNE.fit_transform(pp_df_pivot)
+    logger.info(tSNE_result[:,0].shape)
     x=tSNE_result[:,0]
     y=tSNE_result[:,1]
 
