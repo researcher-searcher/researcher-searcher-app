@@ -30,7 +30,7 @@ def api_search(text:str,method:str='full'):
             'wa':'WA',
             'org':'Org'
             },inplace=True)
-        logger.info(f'\n{df.head()}')
+        #logger.info(f'\n{df.head()}')
         return df[['Name','Email','Count','Org','WA','m_sent_num','q_sent_num','q_sent_text','output','scores','m_sent_text']]
     else:
         return df
@@ -51,7 +51,7 @@ def api_search_person(text:str):
         df['org'] = df['org'].str[:1]
         df['score'] = df['score'].round(4)
         logger.debug(df.shape)
-        logger.debug(f'\n{df.head()}')
+        #logger.debug(f'\n{df.head()}')
         df.rename(columns={
             'name':'Name',
             'email':'Email',

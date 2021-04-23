@@ -14,21 +14,27 @@ from functions import api_vector, plotly_scatter_plot, run_tsne
 
 app = dash.Dash(external_stylesheets = [dbc.themes.BOOTSTRAP])
 
-#TSNE_DF = 'data/tsne.csv.gz'
 
-#df = pd.read_csv(TSNE_DF)
-#df.drop_duplicates(inplace=True)
-#org_counts = df['org-name'].value_counts()
+def read_tsne():
+    TSNE_DF = 'data/tsne.csv.gz'
 
-# filter df to top X for plot
-#df['org_count']= df['org-name'].map(org_counts)
-#df['org-name'] = df['org-name']+' '+df['org_count'].astype(str)
+    df = pd.read_csv(TSNE_DF)
+    df['origin']='tsne'
+    df.drop_duplicates(inplace=True)
+    org_counts = df['org-name'].value_counts()
 
-#logger.info(f'\n{org_counts}')
-#logger.info(f'\n{df}')
+    # filter df to top X for plot
+    df['org_count']= df['org-name'].map(org_counts)
+    df['org-name'] = df['org-name']+' '+df['org_count'].astype(str)
+
+    #logger.info(f'\n{org_counts}')
+    #logger.info(f'\n{df}')
+    return df
 
 starter_query = 'data science. genome wide association studies'
-fig = run_tsne(starter_query)
+#fig = run_tsne(starter_query)
+df = read_tsne()
+fig = plotly_scatter_plot(df)
 
 
 layout = html.Div([
