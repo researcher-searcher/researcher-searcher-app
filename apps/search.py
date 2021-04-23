@@ -45,14 +45,14 @@ for i,row in df.head(n=top).iterrows():
     element_data.append(
         {'data': {'source': row['Name'], 'target':row['Org'][0]}},
     )
-#    logger.info(f'{i} {row["Name"]}')
     for j in range(len(row['scores'])):
         element_data.extend([
-            {'data': {'source': row['Name'], 'target':row['q_sent_text'][j]}},
-            {'data': {'source': row['output'][j], 'target':row['m_sent_text'][j], "weight":row['scores'][j]}},
+            {'data': {'source': row['Name'], 'target':row['q_sent_text'][j], "weight":row['scores'][j]}},
+            #{'data': {'source': row['output'][j], 'target':row['m_sent_text'][j]}},
             #{'data': {'source': row['output'][j], 'target':row['Name']}},
         ])
 # make rels unique
+
 
 logger.debug(element_data)
 layout = html.Div([
@@ -97,13 +97,44 @@ layout = html.Div([
                     cyto.Cytoscape(
                         id='cytoscape-two-nodes',
                         layout={'name': 'cose'},
-                        style={'width': '100%', 'height': '400px'},
+                        style={'width': '100%', 'height': '800px'},
                         #elements=[
                         #    {'data': {'id': 'one', 'label': 'Node 1'}},
                         #    {'data': {'id': 'two', 'label': 'Node 2'}},
                         #    {'data': {'source': 'one', 'target': 'two'}}
                         #]
-                        elements = element_data
+                        elements = element_data,
+                        stylesheet=[
+                            # Group selectors
+                            {
+                                'selector': 'node',
+                                'style': {
+                                    'content': 'data(label)'
+                                }
+                            },
+
+                            # Class selectors
+                            {
+                                'selector': '.output',
+                                #'selector': '[label *= "Gibran"]',
+                                'style': {
+                                    'background-color': 'red',
+                                    #'line-color': 'red'
+                                }
+                            },
+                            {
+                                'selector': '.name',
+                                'style': {
+                                    'shape': 'triangle'
+                                }
+                            },
+                             {
+                                'selector': '[weight > 3]',
+                                'style': {
+                                    'line-color': 'blue'
+                                }
+                            }
+                        ]
                     ),
                 ]),
             ]),
