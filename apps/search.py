@@ -2,22 +2,59 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+import dash_cytoscape as cyto
 import dash_table
+import itertools
 from dash.dependencies import Input, Output, State
 from app import app, navbar
 from functions import api_search
+from loguru import logger
 
 app = dash.Dash(external_stylesheets = [dbc.themes.BOOTSTRAP])
 app.title = "Researcher Searcher - UoB Data Science Network"
 
 # API globals
 API_URL = "https://bdsn-api.mrcieu.ac.uk"
-starter_query="logistic regression"
+starter_query="logistic regression. genome wide association studies"
 starter_method="full"
 
 # get some data to start with
 df  = api_search(text=starter_query,method=starter_method)
 
+# get unique elements for nodes
+top=5
+node_data = {
+    'name':list(df['Name'].head(n=top).unique()),
+    'query_sentences':list(set(itertools.chain.from_iterable(df.head(n=top)['q_sent_text']))),
+    'match_sentences':list(set(itertools.chain.from_iterable(df.head(n=top)['m_sent_text']))),
+    'org':list(set(itertools.chain.from_iterable(df.head(n=top)['Org']))),
+    'output':list(set(itertools.chain.from_iterable(df.head(n=top)['output'])))
+}
+
+element_data=[]
+for k in node_data:
+    logger.debug(k)
+    for v in node_data[k]:
+        logger.debug(f'{k} {v}')
+        element_data.append(
+            {'data': {'id': v, 'label': v[:20], 'classes':k}},
+        )
+
+# create links
+for i,row in df.head(n=top).iterrows():
+    element_data.append(
+        {'data': {'source': row['Name'], 'target':row['Org'][0]}},
+    )
+#    logger.info(f'{i} {row["Name"]}')
+    for j in range(len(row['scores'])):
+        element_data.extend([
+            {'data': {'source': row['Name'], 'target':row['q_sent_text'][j]}},
+            {'data': {'source': row['output'][j], 'target':row['m_sent_text'][j], "weight":row['scores'][j]}},
+            #{'data': {'source': row['output'][j], 'target':row['Name']}},
+        ])
+# make rels unique
+
+logger.debug(element_data)
 layout = html.Div([
         navbar,
         dbc.Container([
@@ -57,6 +94,21 @@ layout = html.Div([
             ]),
             dbc.Row([
                 dbc.Col([
+                    cyto.Cytoscape(
+                        id='cytoscape-two-nodes',
+                        layout={'name': 'cose'},
+                        style={'width': '100%', 'height': '400px'},
+                        #elements=[
+                        #    {'data': {'id': 'one', 'label': 'Node 1'}},
+                        #    {'data': {'id': 'two', 'label': 'Node 2'}},
+                        #    {'data': {'source': 'one', 'target': 'two'}}
+                        #]
+                        elements = element_data
+                    ),
+                ]),
+            ]),
+            dbc.Row([
+                dbc.Col([    
                     html.Br(),
                     dash_table.DataTable(
                         id='search-table',

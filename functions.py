@@ -22,7 +22,7 @@ def api_search(text:str,method:str='full'):
     )
     if not df.empty:
         df['org'] = df['org'].str[:1]
-        print(df.shape)
+        logger.info(df.shape)
         df.rename(columns={
             'person_name':'Name',
             'person_email':'Email',
@@ -30,7 +30,8 @@ def api_search(text:str,method:str='full'):
             'wa':'WA',
             'org':'Org'
             },inplace=True)
-        return df[['Name','Email','Count','Org','WA']]
+        logger.info(f'\n{df.head()}')
+        return df[['Name','Email','Count','Org','WA','m_sent_num','q_sent_num','q_sent_text','output','scores','m_sent_text']]
     else:
         return df
 
@@ -220,7 +221,7 @@ def run_tsne(query:str='data science'):
                 'score':1-aaa[vcount][i]
             }),
         vcount+=1
-    logger.info(new_data)
+    #logger.info(new_data)
     # cosine distance for each query against query
     for i in range(len(vec_res)):
         for j in range(len(vec_res)):
