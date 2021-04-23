@@ -10,25 +10,32 @@ from app import app, navbar
 from functions import api_search
 from loguru import logger
 
+# load extra layouts
+cyto.load_extra_layouts()
+
 app = dash.Dash(external_stylesheets = [dbc.themes.BOOTSTRAP])
 app.title = "Researcher Searcher - UoB Data Science Network"
 
 # API globals
 API_URL = "https://bdsn-api.mrcieu.ac.uk"
 starter_query="logistic regression. genome wide association studies"
+starter_query="nematode. deep learning"
+starter_query="""
+Results from genome-wide association studies (GWAS) can be used to infer causal relationships between phenotypes, using a strategy known as 2-sample Mendelian randomization (2SMR) and bypassing the need for individual-level data. However, 2SMR methods are evolving rapidly and GWAS results are often insufficiently curated, undermining efficient implementation of the approach. We therefore developed MR-Base (http://www.mrbase.org): a platform that integrates a curated database of complete GWAS results (no restrictions according to statistical significance) with an application programming interface, web app and R packages that automate 2SMR. The software includes several sensitivity analyses for assessing the impact of horizontal pleiotropy and other violations of assumptions. The database currently comprises 11 billion single nucleotide polymorphism-trait associations from 1673 GWAS and is updated on a regular basis. Integrating data with software ensures more rigorous application of hypothesis-driven analyses and allows millions of potential causal relationships to be efficiently evaluated in phenome-wide association studies.
+"""
 starter_method="full"
 
 # get some data to start with
 df  = api_search(text=starter_query,method=starter_method)
 
 # get unique elements for nodes
-top=5
+top=20
 node_data = {
     'name':list(df['Name'].head(n=top).unique()),
     'query_sentences':list(set(itertools.chain.from_iterable(df.head(n=top)['q_sent_text']))),
     #'match_sentences':list(set(itertools.chain.from_iterable(df.head(n=top)['m_sent_text']))),
     'org':list(set(itertools.chain.from_iterable(df.head(n=top)['Org']))),
-    'output':list(set(itertools.chain.from_iterable(df.head(n=top)['output'])))
+    #'output':list(set(itertools.chain.from_iterable(df.head(n=top)['output'])))
 }
 
 element_data=[]
@@ -37,7 +44,7 @@ for k in node_data:
     for v in node_data[k]:
         logger.debug(f'{k} {v}')
         element_data.append(
-            {'data': {'id': v, 'label': v[:20]}, 'classes':k},
+            {'data': {'id': v, 'label': v[:50]}, 'classes':k},
         )
 
 # create links
@@ -49,9 +56,8 @@ for i,row in df.head(n=top).iterrows():
         element_data.extend([
             {'data': {'source': row['Name'], 'target':row['q_sent_text'][j], "weight":row['scores'][j]}, "classes":"name-qsent"},
             #{'data': {'source': row['output'][j], 'target':row['m_sent_text'][j]}},
-            {'data': {'source': row['output'][j], 'target':row['Name']}},
+            #{'data': {'source': row['output'][j], 'target':row['Name']}},
         ])
-# make rels unique
 
 
 logger.debug(element_data)
@@ -95,21 +101,27 @@ layout = html.Div([
             dbc.Row([
                 dbc.Col([
                     cyto.Cytoscape(
-                        id='cytoscape-two-nodes',
-                        layout={'name': 'cose'},
+                        id='rs-search',
+                        layout={
+                            'name': 'cose',
+                            'nodeRepulsion': 45000,
+                            'gravity' : 5    
+                            },
                         style={'width': '100%', 'height': '800px'},
-                        #elements=[
-                        #    {'data': {'id': 'one', 'label': 'Node 1'}},
-                        #    {'data': {'id': 'two', 'label': 'Node 2'}},
-                        #    {'data': {'source': 'one', 'target': 'two'}}
-                        #]
                         elements = element_data,
                         stylesheet=[
                             # Group selectors
                             {
                                 'selector': 'node',
                                 'style': {
-                                    'content': 'data(label)'
+                                    'content': 'data(label)',
+                                    'text-halign':'center',
+                                    'text-valign':'center',
+                                    'width':'label',
+                                    'height':'label',
+                                    'shape':'rectangle',
+                                    "text-wrap": "wrap",
+                                    "text-max-width": 80
                                 }
                             },
 
@@ -129,7 +141,7 @@ layout = html.Div([
                             {
                                 'selector': '.org',
                                 'style': {
-                                    'background-color': 'blue',
+                                    'background-color': 'yellow',
                                 }
                             },
                             {
