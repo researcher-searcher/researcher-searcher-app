@@ -26,7 +26,7 @@ top=5
 node_data = {
     'name':list(df['Name'].head(n=top).unique()),
     'query_sentences':list(set(itertools.chain.from_iterable(df.head(n=top)['q_sent_text']))),
-    'match_sentences':list(set(itertools.chain.from_iterable(df.head(n=top)['m_sent_text']))),
+    #'match_sentences':list(set(itertools.chain.from_iterable(df.head(n=top)['m_sent_text']))),
     'org':list(set(itertools.chain.from_iterable(df.head(n=top)['Org']))),
     'output':list(set(itertools.chain.from_iterable(df.head(n=top)['output'])))
 }
@@ -37,7 +37,7 @@ for k in node_data:
     for v in node_data[k]:
         logger.debug(f'{k} {v}')
         element_data.append(
-            {'data': {'id': v, 'label': v[:20], 'classes':k}},
+            {'data': {'id': v, 'label': v[:20]}, 'classes':k},
         )
 
 # create links
@@ -47,9 +47,9 @@ for i,row in df.head(n=top).iterrows():
     )
     for j in range(len(row['scores'])):
         element_data.extend([
-            {'data': {'source': row['Name'], 'target':row['q_sent_text'][j], "weight":row['scores'][j]}},
+            {'data': {'source': row['Name'], 'target':row['q_sent_text'][j], "weight":row['scores'][j]}, "classes":"name-qsent"},
             #{'data': {'source': row['output'][j], 'target':row['m_sent_text'][j]}},
-            #{'data': {'source': row['output'][j], 'target':row['Name']}},
+            {'data': {'source': row['output'][j], 'target':row['Name']}},
         ])
 # make rels unique
 
@@ -115,25 +115,36 @@ layout = html.Div([
 
                             # Class selectors
                             {
-                                'selector': '.output',
-                                #'selector': '[label *= "Gibran"]',
+                                'selector': '.name',
                                 'style': {
                                     'background-color': 'red',
-                                    #'line-color': 'red'
                                 }
                             },
                             {
-                                'selector': '.name',
+                                'selector': '.output',
                                 'style': {
-                                    'shape': 'triangle'
+                                    'background-color': 'green',
                                 }
                             },
-                             {
-                                'selector': '[weight > 3]',
+                            {
+                                'selector': '.org',
                                 'style': {
-                                    'line-color': 'blue'
+                                    'background-color': 'blue',
                                 }
-                            }
+                            },
+                            {
+                                'selector': '.query_sentences',
+                                'style': {
+                                    'background-color': 'orange',
+                                }
+                            },
+                            
+                            # {
+                            #    'selector': '[weight > 3]',
+                            #    'style': {
+                            #        'line-color': 'blue'
+                            #    }
+                            #}
                         ]
                     ),
                 ]),

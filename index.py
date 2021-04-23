@@ -69,13 +69,13 @@ def run_collab(n_clicks, input1, input2):
     return df.to_dict('records')
 
 # callback for home page
-@app.callback(Output('home-fig', 'figure'),
-              Input('home-submit-button-state', 'n_clicks'),
-              State('home-input-1-state', 'value'),
-              )
-def update_plot(n_clicks, input1):
-    fig = run_tsne(query=input1)
-    return fig
+#@app.callback(Output('home-fig', 'figure'),
+#              Input('home-submit-button-state', 'n_clicks'),
+#              State('home-input-1-state', 'value'),
+#              )
+#def update_plot(n_clicks, input1):
+#    fig = run_tsne(query=input1)
+#    return fig
 
 if __name__ == '__main__':
     app.run_server(host='0.0.0.0',debug=True)
