@@ -50,18 +50,18 @@ layout = html.Div([
                     ),
                 ])
             ]),
-            dbc.Row([
-                dbc.Col([
-                    html.H5('Query:'),
-                    dbc.Input(
-                        id='home-input-1-state', 
-                        type='text',
-                        value=starter_query                    )
-                ]),
-                dbc.Col([
-                    html.Br(),
-                    html.Button(id='home-submit-button-state', n_clicks=0, children='Submit',style={"padding": "10px"}),
-                ])
-            ]),
+            # dbc.Row([
+            #     dbc.Col([
+            #         html.H5('Query:'),
+            #         dbc.Input(
+            #             id='home-input-1-state', 
+            #             type='text',
+            #             value=starter_query                    )
+            #     ]),
+            #     dbc.Col([
+            #         html.Br(),
+            #         html.Button(id='home-submit-button-state', n_clicks=0, children='Submit',style={"padding": "10px"}),
+            #     ])
+            # ]),
         ])
     ])
