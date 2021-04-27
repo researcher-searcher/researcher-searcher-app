@@ -36,7 +36,7 @@ def display_page(pathname):
               )
 def run_search(n_clicks, input1, input2):
     logger.info(f'{input1} {input2}') 
-    if input2 in ['full','vec']:
+    if input2 in ['full','vec','combine']:
         df = api_search(text=input1,method=input2)
     elif input2 == 'person':
         df = api_search_person(text=input1)

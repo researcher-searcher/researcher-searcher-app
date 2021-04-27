@@ -9,6 +9,10 @@ from dash.dependencies import Input, Output, State
 from app import app, navbar
 from functions import api_search
 from loguru import logger
+from environs import Env
+
+env = Env()
+env.read_env()
 
 # load extra layouts
 cyto.load_extra_layouts()
@@ -17,7 +21,9 @@ app = dash.Dash(external_stylesheets = [dbc.themes.BOOTSTRAP])
 app.title = "Researcher Searcher - UoB Data Science Network"
 
 # API globals
-API_URL = "https://bdsn-api.mrcieu.ac.uk"
+#API_URL = "https://bdsn-api.mrcieu.ac.uk"
+API_URL = env.str("API_URL")
+logger.info(f'Using API: {API_URL}')
 starter_query="logistic regression. genome wide association studies"
 #starter_query="nematode. deep learning"
 #starter_query="""
@@ -28,37 +34,38 @@ starter_method="full"
 # get some data to start with
 df  = api_search(text=starter_query,method=starter_method)
 
-# get unique elements for nodes
-top=50
-node_data = {
-    'name':list(df['Name'].head(n=top).unique()),
-    'query_sentences':list(set(itertools.chain.from_iterable(df.head(n=top)['q_sent_text']))),
-    #'match_sentences':list(set(itertools.chain.from_iterable(df.head(n=top)['m_sent_text']))),
-    'org':list(set(itertools.chain.from_iterable(df.head(n=top)['Org']))),
-    #'output':list(set(itertools.chain.from_iterable(df.head(n=top)['output'])))
-}
+def create_graph_data():
+    # get unique elements for nodes
+    top=50
+    node_data = {
+        'name':list(df['Name'].head(n=top).unique()),
+        'query_sentences':list(set(itertools.chain.from_iterable(df.head(n=top)['q_sent_text']))),
+        #'match_sentences':list(set(itertools.chain.from_iterable(df.head(n=top)['m_sent_text']))),
+        'org':list(set(itertools.chain.from_iterable(df.head(n=top)['Org']))),
+        #'output':list(set(itertools.chain.from_iterable(df.head(n=top)['output'])))
+    }
+    
+    element_data=[]
+    for k in node_data:
+        #logger.debug(k)
+        for v in node_data[k]:
+            #logger.debug(f'{k} {v}')
+            element_data.append(
+                {'data': {'id': v, 'label': v[:30]}, 'classes':k},
+            )
 
-element_data=[]
-for k in node_data:
-    #logger.debug(k)
-    for v in node_data[k]:
-        #logger.debug(f'{k} {v}')
+    # create links
+    for i,row in df.head(n=top).iterrows():
         element_data.append(
-            {'data': {'id': v, 'label': v[:30]}, 'classes':k},
+            {'data': {'source': row['Name'], 'target':row['Org'][0]}},
         )
-
-# create links
-for i,row in df.head(n=top).iterrows():
-    element_data.append(
-        {'data': {'source': row['Name'], 'target':row['Org'][0]}},
-    )
-    for j in range(len(row['scores'])):
-        element_data.extend([
-            {'data': {'source': row['Name'], 'target':row['q_sent_text'][j], "weight":row['scores'][j]}, "classes":"name-qsent"},
-            #{'data': {'source': row['output'][j], 'target':row['m_sent_text'][j]}},
-            #{'data': {'source': row['output'][j], 'target':row['Name']}},
-        ])
-
+        for j in range(len(row['scores'])):
+            element_data.extend([
+                {'data': {'source': row['Name'], 'target':row['q_sent_text'][j], "weight":row['scores'][j]}, "classes":"name-qsent"},
+                #{'data': {'source': row['output'][j], 'target':row['m_sent_text'][j]}},
+                #{'data': {'source': row['output'][j], 'target':row['Name']}},
+            ])
+    return element_data
 
 #logger.debug(element_data)
 layout = html.Div([
@@ -83,12 +90,13 @@ layout = html.Div([
                     html.H5 ('Method:'),
                     dcc.Dropdown(
                         options=[
+                            {'label': 'Combine', 'value': 'combine'},
                             {'label': 'Full text search', 'value': 'full'},
                             {'label': 'Vector search', 'value': 'vec'},
                             {'label': 'Person search', 'value': 'person'},
                             {'label': 'Output search', 'value': 'output'}
                         ],
-                        value='full',
+                        value='combine',
                         id='search-input-2-state'
                     ),
                 ]),
@@ -98,69 +106,62 @@ layout = html.Div([
                     
                 ])
             ]),
-            dbc.Row([
-                dbc.Col([
-                    cyto.Cytoscape(
-                        id='rs-search',
-                        layout={
-                            'name': 'cose',
-                            'nodeRepulsion': 450000,
-                            'gravitys' : 5    
-                            },
-                        style={'width': '100%', 'height': '800px'},
-                        elements = element_data,
-                        stylesheet=[
-                            # Group selectors
-                            {
-                                'selector': 'node',
-                                'style': {
-                                    'content': 'data(label)',
-                                    'text-halign':'center',
-                                    'text-valign':'center',
-                                    'width':'label',
-                                    'height':'label',
-                                    'shape':'circle',
-                                    "text-wrap": "wrap",
-                                    "text-max-width": 80
-                                }
-                            },
+            # dbc.Row([
+            #     dbc.Col([
+            #         cyto.Cytoscape(
+            #             id='rs-search',
+            #             layout={
+            #                 'name': 'cose',
+            #                 'nodeRepulsion': 450000,
+            #                 'gravitys' : 5    
+            #                 },
+            #             style={'width': '100%', 'height': '800px'},
+            #             elements = element_data,
+            #             stylesheet=[
+            #                 # Group selectors
+            #                 {
+            #                     'selector': 'node',
+            #                     'style': {
+            #                         'content': 'data(label)',
+            #                         'text-halign':'center',
+            #                         'text-valign':'center',
+            #                         'width':'label',
+            #                         'height':'label',
+            #                         'shape':'circle',
+            #                         "text-wrap": "wrap",
+            #                         "text-max-width": 80
+            #                     }
+            #                 },
 
-                            # Class selectors
-                            {
-                                'selector': '.name',
-                                'style': {
-                                    'background-color': '#D4E4F7',
-                                }
-                            },
-                            {
-                                'selector': '.output',
-                                'style': {
-                                    'background-color': '#FDA15A',
-                                }
-                            },
-                            {
-                                'selector': '.org',
-                                'style': {
-                                    'background-color': '#E1EF83',
-                                }
-                            },
-                            {
-                                'selector': '.query_sentences',
-                                'style': {
-                                    'background-color': '#FF9EB5',
-                                }
-                            },
-                            
-                            # {
-                            #    'selector': '[weight > 3]',
-                            #    'style': {
-                            #        'line-color': 'blue'
-                            #    }
-                            #}
-                        ]
-                    ),
-                ]),
-            ]),
+            #                 # Class selectors
+            #                 {
+            #                     'selector': '.name',
+            #                     'style': {
+            #                         'background-color': '#D4E4F7',
+            #                     }
+            #                 },
+            #                 {
+            #                     'selector': '.output',
+            #                     'style': {
+            #                         'background-color': '#FDA15A',
+            #                     }
+            #                 },
+            #                 {
+            #                     'selector': '.org',
+            #                     'style': {
+            #                         'background-color': '#E1EF83',
+            #                     }
+            #                 },
+            #                 {
+            #                     'selector': '.query_sentences',
+            #                     'style': {
+            #                         'background-color': '#FF9EB5',
+            #                     }
+            #                 },
+            #             ]
+            #         ),
+            #     ]),
+            # ]),
             dbc.Row([
                 dbc.Col([    
                     html.Br(),

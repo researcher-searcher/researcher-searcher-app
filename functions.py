@@ -6,7 +6,12 @@ from sklearn.manifold import TSNE
 from scipy.spatial import distance
 import numpy as np
 
-API_URL = "https://bdsn-api.mrcieu.ac.uk"
+from environs import Env
+
+env = Env()
+env.read_env()
+
+API_URL = env.str("API_URL")
 
 def api_search(text:str,method:str='full'):
     logger.debug(f'api_search {text} {method}')
@@ -17,6 +22,7 @@ def api_search(text:str,method:str='full'):
         "method": method
     }
     r = requests.get(url, params=params)
+    #logger.info(r.json())
     df = (
         pd.json_normalize(r.json()["res"])
     )
@@ -31,7 +37,8 @@ def api_search(text:str,method:str='full'):
             'org':'Org'
             },inplace=True)
         #logger.info(f'\n{df.head()}')
-        return df[['Name','Email','Count','Org','WA','m_sent_num','q_sent_num','q_sent_text','output','scores','m_sent_text']]
+        #return df[['Name','Email','Count','Org','WA','m_sent_num','q_sent_num','q_sent_text','output','scores','m_sent_text']]
+        return df[['Name','Email','Count','Org','WA']]
     else:
         return df
 

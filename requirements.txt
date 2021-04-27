@@ -7,3 +7,4 @@ loguru
 gunicorn
 sklearn
 dash-cytoscape==0.2.0
+environs
