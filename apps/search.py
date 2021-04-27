@@ -19,17 +19,17 @@ app.title = "Researcher Searcher - UoB Data Science Network"
 # API globals
 API_URL = "https://bdsn-api.mrcieu.ac.uk"
 starter_query="logistic regression. genome wide association studies"
-starter_query="nematode. deep learning"
-starter_query="""
-Results from genome-wide association studies (GWAS) can be used to infer causal relationships between phenotypes, using a strategy known as 2-sample Mendelian randomization (2SMR) and bypassing the need for individual-level data. However, 2SMR methods are evolving rapidly and GWAS results are often insufficiently curated, undermining efficient implementation of the approach. We therefore developed MR-Base (http://www.mrbase.org): a platform that integrates a curated database of complete GWAS results (no restrictions according to statistical significance) with an application programming interface, web app and R packages that automate 2SMR. The software includes several sensitivity analyses for assessing the impact of horizontal pleiotropy and other violations of assumptions. The database currently comprises 11 billion single nucleotide polymorphism-trait associations from 1673 GWAS and is updated on a regular basis. Integrating data with software ensures more rigorous application of hypothesis-driven analyses and allows millions of potential causal relationships to be efficiently evaluated in phenome-wide association studies.
-"""
+#starter_query="nematode. deep learning"
+#starter_query="""
+#Results from genome-wide association studies (GWAS) can be used to infer causal relationships between phenotypes, using a strategy known as 2-sample Mendelian randomization (2SMR) and bypassing the need for individual-level data. However, 2SMR methods are evolving rapidly and GWAS results are often insufficiently curated, undermining efficient implementation of the approach. We therefore developed MR-Base (http://www.mrbase.org): a platform that integrates a curated database of complete GWAS results (no restrictions according to statistical significance) with an application programming interface, web app and R packages that automate 2SMR. The software includes several sensitivity analyses for assessing the impact of horizontal pleiotropy and other violations of assumptions. The database currently comprises 11 billion single nucleotide polymorphism-trait associations from 1673 GWAS and is updated on a regular basis. Integrating data with software ensures more rigorous application of hypothesis-driven analyses and allows millions of potential causal relationships to be efficiently evaluated in phenome-wide association studies.
+#"""
 starter_method="full"
 
 # get some data to start with
 df  = api_search(text=starter_query,method=starter_method)
 
 # get unique elements for nodes
-top=20
+top=50
 node_data = {
     'name':list(df['Name'].head(n=top).unique()),
     'query_sentences':list(set(itertools.chain.from_iterable(df.head(n=top)['q_sent_text']))),
@@ -40,11 +40,11 @@ node_data = {
 
 element_data=[]
 for k in node_data:
-    logger.debug(k)
+    #logger.debug(k)
     for v in node_data[k]:
-        logger.debug(f'{k} {v}')
+        #logger.debug(f'{k} {v}')
         element_data.append(
-            {'data': {'id': v, 'label': v[:50]}, 'classes':k},
+            {'data': {'id': v, 'label': v[:30]}, 'classes':k},
         )
 
 # create links
@@ -60,7 +60,7 @@ for i,row in df.head(n=top).iterrows():
         ])
 
 
-logger.debug(element_data)
+#logger.debug(element_data)
 layout = html.Div([
         navbar,
         dbc.Container([
@@ -104,8 +104,8 @@ layout = html.Div([
                         id='rs-search',
                         layout={
                             'name': 'cose',
-                            'nodeRepulsion': 45000,
-                            'gravity' : 5    
+                            'nodeRepulsion': 450000,
+                            'gravitys' : 5    
                             },
                         style={'width': '100%', 'height': '800px'},
                         elements = element_data,
@@ -119,7 +119,7 @@ layout = html.Div([
                                     'text-valign':'center',
                                     'width':'label',
                                     'height':'label',
-                                    'shape':'rectangle',
+                                    'shape':'circle',
                                     "text-wrap": "wrap",
                                     "text-max-width": 80
                                 }
@@ -129,25 +129,25 @@ layout = html.Div([
                             {
                                 'selector': '.name',
                                 'style': {
-                                    'background-color': 'red',
+                                    'background-color': '#D4E4F7',
                                 }
                             },
                             {
                                 'selector': '.output',
                                 'style': {
-                                    'background-color': 'green',
+                                    'background-color': '#FDA15A',
                                 }
                             },
                             {
                                 'selector': '.org',
                                 'style': {
-                                    'background-color': 'yellow',
+                                    'background-color': '#E1EF83',
                                 }
                             },
                             {
                                 'selector': '.query_sentences',
                                 'style': {
-                                    'background-color': 'orange',
+                                    'background-color': '#FF9EB5',
                                 }
                             },
                             
