@@ -23,26 +23,30 @@ layout = html.Div([
                     dcc.Markdown('''
                     ### Search
 
-                    ##### 4 methods:
+                    ##### 5 methods:
                     
-                    1. **Full text:** Query text is split into sentences. 
+                    1. **Combine:** Combination of 2 and 3. Score for 3 is multiplied by 30 and added to score from 2. 
+                    Aim of this method is to capture the benefits of both approaches, boost the results from full text, and allow 
+                    for results only identified by vectors.
+
+                    2. **Full text:** Query text is split into sentences. 
                     Each sentence is queried against each title/abstract sentences using the 
                     Elasticsearch full text [similarity score](https://www.elastic.co/blog/practical-bm25-part-2-the-bm25-algorithm-and-its-variables) 
                     (limit top 100).  Weighted average returned for 
-                    each person using score and rank.
+                    each person using score and rank multiplied by a value representing the number of matching sentences.
                     
-                    2. **Vector:** Query text is split into sentences. 
+                    3. **Vector:** Query text is split into sentences. 
                     A vector\* representation of each sentence is created then 
                     compared to the vectors\* of all title/abstract sentences 
                     using cosine distance (limit top 100).  Weighted average 
-                    returned for each person using distance and rank.
+                    returned for each person using distance and rank multiplied by a value representing the number of matching sentences.
                     
-                    3. **Person:** Query text is treated as single document 
+                    4. **Person:** Query text is treated as single document 
                     and a single vector\* is created. This is compared to each 
                     person vector\* (average of output sentences) using cosine 
                     distance and top 100 returned.
                     
-                    4. **Output:** Query text is treated as single document and a 
+                    5. **Output:** Query text is treated as single document and a 
                     single vector\* is created. This is compared to each output vector\* 
                     (average of output sentences) using cosine distance and top 100 
                     returned.
