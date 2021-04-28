@@ -30,6 +30,7 @@ def display_page(pathname):
 # callback for search page
 @app.callback(Output('search-table', 'data'),
               Output('search-table', 'columns'),
+              Output('search-table', 'tooltip_data'),
               Input('search-submit-button-state', 'n_clicks'),
               State('search-input-1-state', 'value'),
               State('search-input-2-state', 'value'),
@@ -46,7 +47,14 @@ def run_search(n_clicks, input1, input2):
             {"name": i, "id": i} for i in df.columns
         ]
     logger.debug(columns)
-    return df.to_dict('records'), columns
+    #tooltip_data = [{c:{'type': 'text', 'value': f'{r},{c}'} for c in df.columns} for r in df[df.columns].values]
+    tooltip_data= [   {
+                            column: {'value': str(value), 'type': 'markdown'}
+                                for column, value in row.items()
+                            } for row in df.to_dict('records')
+                        ],
+    #logger.debug(tooltip_data)
+    return df.to_dict('records'), columns, tooltip_data
     
 
 # callback for person page

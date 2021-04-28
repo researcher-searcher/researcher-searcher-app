@@ -170,6 +170,14 @@ layout = html.Div([
                         columns=[
                             {"name": i, "id": i} for i in df.columns
                         ],
+                        #tooltip_data= [{c:{'type': 'text', 'value': f'{r},{c}'} for c in df.columns} for r in df[df.columns].values],
+                        tooltip_data= [   {
+                            column: {'value': str(value), 'type': 'markdown'}
+                                for column, value in row.items()
+                            } for row in df.to_dict('records')
+                        ],
+                        tooltip_delay=0,
+                        tooltip_duration=None,
                         style_cell={
                             'overflow': 'hidden',
                             'textOverflow': 'ellipsis',
@@ -188,6 +196,11 @@ layout = html.Div([
                         export_format="csv"
                     ) 
                 ])
-            ])
+            ]),
+            dbc.Tooltip(
+                "Noun: rare, "
+                "the action or habit of estimating something as worthless.",
+                target="g.hemani@bristol.ac.uk",
+            ),
         ])
     ])
