@@ -20,6 +20,8 @@ layout = html.Div([
             dbc.Row([
                 dbc.Col([
                     html.Br(),
+                    html.Img(src=app.get_asset_url('overview-images.png'), style={'width':'100%'}),
+
                     dcc.Markdown('''
                     ### Search
 
