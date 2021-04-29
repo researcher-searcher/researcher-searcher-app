@@ -22,7 +22,7 @@ def api_search(text:str,method:str='full'):
         "method": method
     }
     r = requests.get(url, params=params)
-    #logger.info(r.json())
+    logger.info(r.json())
     df = (
         pd.json_normalize(r.json()["res"])
     )

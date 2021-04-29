@@ -33,7 +33,7 @@ starter_query="logistic regression. genome wide association studies"
 starter_method="combine"
 
 # get some data to start with
-df  = api_search(text=starter_query,method=starter_method)
+df  = api_search(text=starter_query,method=starter_method).head(n=50)
 
 def create_graph_data():
     # get unique elements for nodes

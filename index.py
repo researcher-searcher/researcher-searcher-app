@@ -42,15 +42,17 @@ def display_page(pathname):
               State('search-input-2-state', 'value'),
               )
 def run_search(n_clicks, slider_val, input1, input2):
-    if n_clicks == 0:
+    logger.info(slider_val)
+    if n_clicks == 0 and slider_val == 50:
         return dash.no_update
     else:
+        logger.info('Recreating plot...')
         fig={}
         fig_style={'display':'none'}
         slider_style={'display':'none'}
         logger.info(f'{input1} {input2}') 
         if input2 in ['full','vec','combine']:
-            df = api_search(text=input1,method=input2)
+            df = api_search(text=input1,method=input2).head(n=slider_val)
             # xy plot
             fig = px.scatter(
                 df.head(n=slider_val), x="WA", y="Top Score",hover_data=['Name'],size='Count',color='Org',
