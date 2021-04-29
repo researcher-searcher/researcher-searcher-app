@@ -5,6 +5,7 @@ import dash_bootstrap_components as dbc
 import dash_cytoscape as cyto
 import dash_table
 import itertools
+import plotly.express as px
 from dash.dependencies import Input, Output, State
 from app import app, navbar
 from functions import api_search
@@ -29,7 +30,7 @@ starter_query="logistic regression. genome wide association studies"
 #starter_query="""
 #Results from genome-wide association studies (GWAS) can be used to infer causal relationships between phenotypes, using a strategy known as 2-sample Mendelian randomization (2SMR) and bypassing the need for individual-level data. However, 2SMR methods are evolving rapidly and GWAS results are often insufficiently curated, undermining efficient implementation of the approach. We therefore developed MR-Base (http://www.mrbase.org): a platform that integrates a curated database of complete GWAS results (no restrictions according to statistical significance) with an application programming interface, web app and R packages that automate 2SMR. The software includes several sensitivity analyses for assessing the impact of horizontal pleiotropy and other violations of assumptions. The database currently comprises 11 billion single nucleotide polymorphism-trait associations from 1673 GWAS and is updated on a regular basis. Integrating data with software ensures more rigorous application of hypothesis-driven analyses and allows millions of potential causal relationships to be efficiently evaluated in phenome-wide association studies.
 #"""
-starter_method="full"
+starter_method="combine"
 
 # get some data to start with
 df  = api_search(text=starter_query,method=starter_method)
@@ -66,6 +67,18 @@ def create_graph_data():
                 #{'data': {'source': row['output'][j], 'target':row['Name']}},
             ])
     return element_data
+
+def create_xy():
+    fig = px.scatter(
+        df.head(n=50), x="WA", y="Top Score",hover_data=['Name'],size='Count',color='Org',
+        labels={
+                "WA": "Weighted Average (WA)",
+                },
+        title="Top 50 people"
+        )
+    return fig
+
+fig = create_xy()
 
 #logger.debug(element_data)
 layout = html.Div([
@@ -163,6 +176,16 @@ layout = html.Div([
             #     ]),
             # ]),
             dbc.Row([
+                dbc.Col([
+                    dcc.Graph(
+                        id='search-fig',
+                        figure=fig,
+                        responsive=True,
+                        style={'height': '60vh'}
+                    ),
+                ])
+            ]),
+            dbc.Row([
                 dbc.Col([    
                     html.Br(),
                     dash_table.DataTable(
@@ -171,21 +194,27 @@ layout = html.Div([
                             {"name": i, "id": i} for i in df.columns
                         ],
                         #tooltip_data= [{c:{'type': 'text', 'value': f'{r},{c}'} for c in df.columns} for r in df[df.columns].values],
-                        tooltip_data= [   {
-                            column: {'value': str(value), 'type': 'markdown'}
-                                for column, value in row.items()
-                            } for row in df.to_dict('records')
-                        ],
-                        tooltip_delay=0,
-                        tooltip_duration=None,
+                        #tooltip_data= [   {
+                        #    column: {'value': str(value), 'type': 'markdown'}
+                        #        for column, value in row.items()
+                        #    } for row in df.to_dict('records')
+                        #],
+                        #tooltip_delay=0,
+                        #tooltip_duration=None,
                         style_cell={
                             'overflow': 'hidden',
                             'textOverflow': 'ellipsis',
                             'maxWidth': 0
                         },
                         style_cell_conditional=[
-                            {'if': {'column_id': 'Title'},
-                            'width': '80%'}
+                            {'if': 
+                                {'column_id': 'Title'},
+                                'width': '80%'
+                            },
+                            {'if':
+                                {'column_id': 'Name'},
+                                'width': '25%'
+                            }
                         ],
                         data=df.to_dict('records'),
                         sort_action="native",
@@ -197,10 +226,5 @@ layout = html.Div([
                     ) 
                 ])
             ]),
-            dbc.Tooltip(
-                "Noun: rare, "
-                "the action or habit of estimating something as worthless.",
-                target="g.hemani@bristol.ac.uk",
-            ),
         ])
     ])

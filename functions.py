@@ -27,18 +27,22 @@ def api_search(text:str,method:str='full'):
         pd.json_normalize(r.json()["res"])
     )
     if not df.empty:
-        df['org'] = df['org'].str[:1]
+        # just get first org in list
+        df['org'] = df['org'].str[0]
+        # get top score
+        df['scores']=df['scores'].str[0]
         logger.info(df.shape)
         df.rename(columns={
             'person_name':'Name',
             'person_email':'Email',
             'count':'Count',
             'wa':'WA',
-            'org':'Org'
+            'org':'Org',
+            'scores':'Top Score'
             },inplace=True)
         #logger.info(f'\n{df.head()}')
         #return df[['Name','Email','Count','Org','WA','m_sent_num','q_sent_num','q_sent_text','output','scores','m_sent_text']]
-        return df[['Name','Email','Count','Org','WA']]
+        return df[['Name','Email','Count','Org','WA','Top Score']]
     else:
         return df
 
