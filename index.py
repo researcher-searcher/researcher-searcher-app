@@ -34,29 +34,33 @@ def display_page(pathname):
               Output('search-table', 'columns'),
               Output('search-fig', 'figure'),
               Output('search-fig', 'style'),
+              Output('search-slider', 'style'),
               #Output('search-table', 'tooltip_data'),
               Input('search-submit-button-state', 'n_clicks'),
+              Input('search-slider', 'value'),
               State('search-input-1-state', 'value'),
               State('search-input-2-state', 'value'),
               )
-def run_search(n_clicks, input1, input2):
+def run_search(n_clicks, slider_val, input1, input2):
     if n_clicks == 0:
         return dash.no_update
     else:
         fig={}
         fig_style={'display':'none'}
+        slider_style={'display':'none'}
         logger.info(f'{input1} {input2}') 
         if input2 in ['full','vec','combine']:
             df = api_search(text=input1,method=input2)
             # xy plot
             fig = px.scatter(
-                df.head(n=50), x="WA", y="Top Score",hover_data=['Name'],size='Count',color='Org',
+                df.head(n=slider_val), x="WA", y="Top Score",hover_data=['Name'],size='Count',color='Org',
                 labels={
                         "WA": "Weighted Average (WA)",
                         },
-                title="Top 50 people"
+                title=f"Top {slider_val} people"
             )
             fig_style={'height': '60vh'}
+            slider_style={'display': 'block'}
         elif input2 == 'person':
             df = api_search_person(text=input1)
         elif input2 == 'output':
@@ -66,8 +70,6 @@ def run_search(n_clicks, input1, input2):
             ]
         #logger.debug(columns)
 
-
-
         # tooltip
         #tooltip_data = [{c:{'type': 'text', 'value': f'{r},{c}'} for c in df.columns} for r in df[df.columns].values]
         #tooltip_data= [   {
@@ -76,7 +78,7 @@ def run_search(n_clicks, input1, input2):
         #                        } for row in df.to_dict('records')
         #                    ],
         #logger.debug(tooltip_data)
-        return df.to_dict('records'), columns, fig, fig_style
+        return df.to_dict('records'), columns, fig, fig_style, slider_style
     
 
 # callback for person page
