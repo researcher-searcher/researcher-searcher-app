@@ -55,7 +55,7 @@ def run_search(n_clicks, slider_val, input1, input2):
             df = api_search(text=input1,method=input2).head(n=slider_val)
             # xy plot
             fig = px.scatter(
-                df.head(n=slider_val), x="WA", y="Top Score",hover_data=['Name'],size='Count',color='Org',
+                df.head(n=slider_val), x="WA", y="Top Score",hover_data=['Name'],size='Count',color='Org',symbol='Org',
                 labels={
                         "WA": "Weighted Average (WA)",
                         },

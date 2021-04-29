@@ -70,7 +70,7 @@ def create_graph_data():
 
 def create_xy():
     fig = px.scatter(
-        df.head(n=50), x="WA", y="Top Score",hover_data=['Name'],size='Count',color='Org',
+        df.head(n=50), x="WA", y="Top Score",hover_data=['Name'],size='Count',color='Org',symbol='Org',
         labels={
                 "WA": "Weighted Average (WA)",
                 },
