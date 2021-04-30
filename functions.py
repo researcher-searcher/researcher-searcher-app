@@ -173,6 +173,15 @@ def api_collab(text:str,method:str='no'):
         # fix org
         df['Org'] = df['Org'].str[0]
 
+        # normalise
+        scores = list(df['Score'])
+        df['ScoreNorm'] = round((df['Score'] - df['Score'].min()) / (df['Score'].max() - df['Score'].min()),4)   
+
+        #logger.info(norm)
+
+        # sort by score
+        df = df.sort_values(by='Score',ascending=False)
+
         logger.info(f'\n{df}')
 
         fig = px.scatter(
@@ -182,7 +191,7 @@ def api_collab(text:str,method:str='no'):
             color="Org",
             symbol="Org",
             hover_data=['Name'],
-            size='Score'
+            size='ScoreNorm'
         )
 
         return df[['Name','Email','Org','Score']], fig
