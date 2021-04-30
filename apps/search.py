@@ -7,7 +7,7 @@ import dash_table
 import itertools
 import plotly.express as px
 from dash.dependencies import Input, Output, State
-from app import app, navbar
+from app import app, navbar, footer
 from functions import api_search
 from loguru import logger
 from environs import Env
@@ -231,9 +231,11 @@ layout = html.Div([
                         page_action="native",
                         page_current= 0,
                         page_size= 10,
-                        export_format="csv"
+                        export_format="csv",
+                        filter_action='native',
                     ) 
                 ])
             ]),
-        ])
+        ]),
+        footer
     ])

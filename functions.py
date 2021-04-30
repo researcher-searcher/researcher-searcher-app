@@ -141,11 +141,53 @@ def api_collab(text:str,method:str='no'):
             }
             ,inplace=True
         )
-
         print(df.shape)
-        return df[['Name','Email','Org','Score']]
+
+        # run aaa
+        endpoint = "/aaa/"
+        url = f"{API_URL}{endpoint}"
+        person_list = list(df['Email'])
+        #person_list.append(text)
+        params = {
+            "query": person_list,
+        }
+        aaa = requests.get(url, params=params)
+        aaa_df = (
+            pd.json_normalize(aaa.json()["res"])
+        )
+        logger.info(aaa_df)
+        # run tSNE
+        tSNE=TSNE(n_components=2)
+        aaa_df_pivot = aaa_df.pivot(index='p1', columns='p2', values='score')
+        aaa_df_pivot = aaa_df_pivot.fillna(1)
+        logger.info(f'\n{aaa_df_pivot}')
+        tSNE_result=tSNE.fit_transform(aaa_df_pivot)
+        x=tSNE_result[:,0]
+        y=tSNE_result[:,1]
+
+        #person_df = pd.DataFrame(person_list,columns=['p'])
+        df = df.sort_values(by='Email')
+
+        df['x']=x
+        df['y']=y
+        # fix org
+        df['Org'] = df['Org'].str[0]
+
+        logger.info(f'\n{df}')
+
+        fig = px.scatter(
+            df, 
+            x="x", 
+            y="y", 
+            color="Org",
+            symbol="Org",
+            hover_data=['Name'],
+            size='Score'
+        )
+
+        return df[['Name','Email','Org','Score']], fig
     else:
-        return df
+        return df, {}
 
 def api_vector(text:str,method:str='sent'):
     logger.debug(f'api_vector {text} {method}')
@@ -164,6 +206,7 @@ def api_vector(text:str,method:str='sent'):
 
 def plotly_scatter_plot(df,top=12):
     df = df[(df['org_count']>top) | (df['origin']=='query')]
+    logger.info(f'\n{df.head()}')
     fig = px.scatter(
         df, 
         x="x", 
@@ -174,6 +217,7 @@ def plotly_scatter_plot(df,top=12):
         )
     fig.update_layout(legend_title_text=f'Organisation (>{top} people)')
     return fig
+
 
 def run_tsne(query:str='data science'):
     PEOPLE_PAIRS = 'data/people_vector_pairs.pkl.gz'

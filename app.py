@@ -19,5 +19,10 @@ navbar = dbc.NavbarSimple(
     dark=True,
 )
 
+footer = dbc.NavbarSimple(
+    color="primary",
+    dark=True,
+)
+
 server = app.server
 app.config.suppress_callback_exceptions = True

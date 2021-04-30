@@ -4,7 +4,7 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 import dash_table
 from dash.dependencies import Input, Output, State
-from app import app, navbar
+from app import app, navbar, footer
 from functions import api_collab
 
 app = dash.Dash(external_stylesheets = [dbc.themes.BOOTSTRAP])
@@ -14,7 +14,7 @@ app.title = "Researcher Searcher - UoB Data Science Network"
 starter_query="jean.golding@bristol.ac.uk"
 
 # get some data to start with
-df  = api_collab(text=starter_query)
+df,fig  = api_collab(text=starter_query)
 
 layout = html.Div([
         navbar,
@@ -49,6 +49,16 @@ layout = html.Div([
             ]),
             dbc.Row([
                 dbc.Col([
+                    dcc.Graph(
+                        id='collab-plot',
+                        figure=fig,
+                        responsive=True,
+                        style={'height': '80vh'}
+                    )
+                ])
+            ]),
+            dbc.Row([
+                dbc.Col([
                     html.Br(),
                     dash_table.DataTable(
                         id='collab-table',
@@ -65,5 +75,6 @@ layout = html.Div([
                     )
                 ])
             ])
-        ])
+        ]),
+        footer
     ])

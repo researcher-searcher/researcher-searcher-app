@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 import requests
 import numpy as np
 import pandas as pd
-from app import app, navbar
+from app import app, navbar, footer
 from loguru import logger
 from functions import api_vector, plotly_scatter_plot, run_tsne
 
@@ -63,5 +63,6 @@ layout = html.Div([
             #         html.Button(id='home-submit-button-state', n_clicks=0, children='Submit',style={"padding": "10px"}),
             #     ])
             # ]),
-        ])
+        ]),
+        footer
     ])
