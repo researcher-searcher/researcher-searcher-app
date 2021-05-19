@@ -31,6 +31,15 @@ layout = html.Div([
                 dbc.Col([
                     html.Br(),
                     html.Button(id='person-submit-button-state', n_clicks=0, children='Submit',style={"padding": "10px"}),
+                ]),
+                dbc.Col([
+                    html.Br(),
+                    html.Br(),
+                    dcc.Loading(
+                        id="person-loading-1",
+                        type="default",
+                        children=html.Div(id="person-loading-output-1")
+                    ),
                 ])
             ]),
             dbc.Row([

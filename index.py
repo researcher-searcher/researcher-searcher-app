@@ -2,6 +2,7 @@ import dash_core_components as dcc
 import dash
 import dash_html_components as html
 import plotly.express as px
+import time
 from dash.dependencies import Input, Output, State
 from apps.search import api_search
 from functions import api_search, api_search_person, api_search_output, api_person, api_collab, run_tsne
@@ -35,13 +36,15 @@ def display_page(pathname):
               Output('search-fig', 'figure'),
               Output('search-fig', 'style'),
               Output('search-slider', 'style'),
+              Output("search-loading-output-1", "children"),
               #Output('search-table', 'tooltip_data'),
               Input('search-submit-button-state', 'n_clicks'),
               Input('search-slider', 'value'),
+              Input("search-submit-button-state", "value"),
               State('search-input-1-state', 'value'),
               State('search-input-2-state', 'value'),
               )
-def run_search(n_clicks, slider_val, input1, input2):
+def run_search(n_clicks, slider_val, value, input1, input2):
     logger.info(slider_val)
     if n_clicks == 0 and slider_val == 50:
         return dash.no_update
@@ -80,34 +83,37 @@ def run_search(n_clicks, slider_val, input1, input2):
         #                        } for row in df.to_dict('records')
         #                    ],
         #logger.debug(tooltip_data)
-        return df.to_dict('records'), columns, fig, fig_style, slider_style
-    
+        return df.to_dict('records'), columns, fig, fig_style, slider_style, value
 
 # callback for person page
 @app.callback(Output('person-table', 'data'),
+              Output("person-loading-output-1", "children"),
               Input('person-submit-button-state', 'n_clicks'),
+              Input("person-submit-button-state", "value"),
               State('person-input-1-state', 'value'),
               )
-def run_person(n_clicks, input1):
+def run_person(n_clicks, value, input1):
     if n_clicks == 0:
         return dash.no_update
     else:
         df = api_person(text=input1)
-        return df.to_dict('records')
+        return df.to_dict('records'), value
 
 # callback for collab page
 @app.callback(Output('collab-table', 'data'),
               Output('collab-plot', 'figure'),
+              Output("collab-loading-output-1", "children"),
               Input('collab-submit-button-state', 'n_clicks'),
+              Input("collab-submit-button-state", "value"),
               State('collab-input-1-state', 'value'),
               State('collab-input-2-state', 'value'),
               )
-def run_collab(n_clicks, input1, input2):
+def run_collab(n_clicks, value, input1, input2):
     if n_clicks == 0:
         return dash.no_update
     else:
         df, fig = api_collab(text=input1,method=input2)
-        return df.to_dict('records'), fig
+        return df.to_dict('records'), fig, value
 
 # callback for home page
 #@app.callback(Output('home-fig', 'figure'),

@@ -45,6 +45,15 @@ layout = html.Div([
                 dbc.Col([
                     html.Br(),
                     html.Button(id='collab-submit-button-state', n_clicks=0, children='Submit',style={"padding": "10px"}),
+                ]),
+                dbc.Col([
+                    html.Br(),
+                    html.Br(),
+                    dcc.Loading(
+                        id="collab-loading-1",
+                        type="default",
+                        children=html.Div(id="collab-loading-output-1")
+                    ),
                 ])
             ]),
             dbc.Row([
