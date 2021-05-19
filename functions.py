@@ -116,6 +116,59 @@ def api_person(text:str,top:int=100):
     print(df.shape)
     return df
 
+def collab_tsne(df):
+
+    # run aaa
+    endpoint = "/aaa/"
+    url = f"{API_URL}{endpoint}"
+    person_list = list(df['Email'])
+    #person_list.append(text)
+    params = {
+        "query": person_list,
+    }
+    aaa = requests.get(url, params=params)
+    aaa_df = (
+        pd.json_normalize(aaa.json()["res"])
+    )
+    logger.info(aaa_df)
+    # run tSNE
+    tSNE=TSNE(n_components=2)
+    aaa_df_pivot = aaa_df.pivot(index='p1', columns='p2', values='score')
+    aaa_df_pivot = aaa_df_pivot.fillna(1)
+    logger.info(f'\n{aaa_df_pivot}')
+    tSNE_result=tSNE.fit_transform(aaa_df_pivot)
+    x=tSNE_result[:,0]
+    y=tSNE_result[:,1]
+
+    #person_df = pd.DataFrame(person_list,columns=['p'])
+    df = df.sort_values(by='Email')
+
+    df['x']=x
+    df['y']=y
+    # fix org
+    df['Org'] = df['Org'].str[0]
+
+    # normalise
+    scores = list(df['Score'])
+    df['ScoreNorm'] = round((df['Score'] - df['Score'].min()) / (df['Score'].max() - df['Score'].min()),4)   
+
+    #logger.info(norm)
+
+    # sort by score
+    df = df.sort_values(by='Score',ascending=False)
+
+    logger.info(f'\n{df}')
+
+    fig = px.scatter(
+        df, 
+        x="x", 
+        y="y", 
+        color="Org",
+        symbol="Org",
+        hover_data=['Name'],
+        size='ScoreNorm'
+    )
+    return fig
 
 def api_collab(text:str,method:str='no'):
     logger.debug(f'api_collab {text} {method}')
@@ -143,58 +196,8 @@ def api_collab(text:str,method:str='no'):
         )
         print(df.shape)
 
-        # run aaa
-        endpoint = "/aaa/"
-        url = f"{API_URL}{endpoint}"
-        person_list = list(df['Email'])
-        #person_list.append(text)
-        params = {
-            "query": person_list,
-        }
-        aaa = requests.get(url, params=params)
-        aaa_df = (
-            pd.json_normalize(aaa.json()["res"])
-        )
-        logger.info(aaa_df)
-        # run tSNE
-        tSNE=TSNE(n_components=2)
-        aaa_df_pivot = aaa_df.pivot(index='p1', columns='p2', values='score')
-        aaa_df_pivot = aaa_df_pivot.fillna(1)
-        logger.info(f'\n{aaa_df_pivot}')
-        tSNE_result=tSNE.fit_transform(aaa_df_pivot)
-        x=tSNE_result[:,0]
-        y=tSNE_result[:,1]
 
-        #person_df = pd.DataFrame(person_list,columns=['p'])
-        df = df.sort_values(by='Email')
-
-        df['x']=x
-        df['y']=y
-        # fix org
-        df['Org'] = df['Org'].str[0]
-
-        # normalise
-        scores = list(df['Score'])
-        df['ScoreNorm'] = round((df['Score'] - df['Score'].min()) / (df['Score'].max() - df['Score'].min()),4)   
-
-        #logger.info(norm)
-
-        # sort by score
-        df = df.sort_values(by='Score',ascending=False)
-
-        logger.info(f'\n{df}')
-
-        fig = px.scatter(
-            df, 
-            x="x", 
-            y="y", 
-            color="Org",
-            symbol="Org",
-            hover_data=['Name'],
-            size='ScoreNorm'
-        )
-
-        return df[['Name','Email','Org','Score']], fig
+        return df[['Name','Email','Org','Score']]
     else:
         return df, {}
 

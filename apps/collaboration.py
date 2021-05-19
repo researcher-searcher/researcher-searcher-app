@@ -14,7 +14,7 @@ app.title = "Researcher Searcher - UoB Data Science Network"
 starter_query="jean.golding@bristol.ac.uk"
 
 # get some data to start with
-df,fig  = api_collab(text=starter_query)
+df = api_collab(text=starter_query)
 
 layout = html.Div([
         navbar,
@@ -56,16 +56,16 @@ layout = html.Div([
                     ),
                 ])
             ]),
-            dbc.Row([
-                dbc.Col([
-                    dcc.Graph(
-                        id='collab-plot',
-                        figure=fig,
-                        responsive=True,
-                        style={'height': '80vh'}
-                    )
-                ])
-            ]),
+            #dbc.Row([
+            #    dbc.Col([
+            #        dcc.Graph(
+            #            id='collab-plot',
+            #            figure=fig,
+            #            responsive=True,
+            #            style={'height': '80vh'}
+            #        )
+            #    ])
+            #]),
             dbc.Row([
                 dbc.Col([
                     html.Br(),

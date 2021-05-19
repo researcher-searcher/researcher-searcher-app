@@ -101,7 +101,7 @@ def run_person(n_clicks, value, input1):
 
 # callback for collab page
 @app.callback(Output('collab-table', 'data'),
-              Output('collab-plot', 'figure'),
+              #Output('collab-plot', 'figure'),
               Output("collab-loading-output-1", "children"),
               Input('collab-submit-button-state', 'n_clicks'),
               Input("collab-submit-button-state", "value"),
@@ -112,8 +112,8 @@ def run_collab(n_clicks, value, input1, input2):
     if n_clicks == 0:
         return dash.no_update
     else:
-        df, fig = api_collab(text=input1,method=input2)
-        return df.to_dict('records'), fig, value
+        df = api_collab(text=input1,method=input2)
+        return df.to_dict('records'), value
 
 # callback for home page
 #@app.callback(Output('home-fig', 'figure'),
