@@ -34,15 +34,14 @@ def api_search(text:str,method:str='full'):
         logger.info(df.shape)
         df.rename(columns={
             'person_name':'Name',
-            'person_email':'Email',
+            'person_id':'ID',
             'count':'Count',
             'wa':'WA',
             'org':'Org',
             'scores':'Top Score'
             },inplace=True)
         #logger.info(f'\n{df.head()}')
-        #return df[['Name','Email','Count','Org','WA','m_sent_num','q_sent_num','q_sent_text','output','scores','m_sent_text']]
-        return df[['Name','Email','Count','Org','WA','Top Score']]
+        return df[['Name','ID','Count','Org','WA','Top Score']]
     else:
         return df
 
@@ -65,11 +64,11 @@ def api_search_person(text:str):
         #logger.debug(f'\n{df.head()}')
         df.rename(columns={
             'name':'Name',
-            'email':'Email',
+            'person_id':'ID',
             'score':'Score',
             'org':'Org'
             },inplace=True)
-        return df[['Name','Email','Org','Score']]
+        return df[['Name','ID','Org','Score']]
     else:
         return df
 
@@ -121,7 +120,7 @@ def collab_tsne(df):
     # run aaa
     endpoint = "/aaa/"
     url = f"{API_URL}{endpoint}"
-    person_list = list(df['Email'])
+    person_list = list(df['ID'])
     #person_list.append(text)
     params = {
         "query": person_list,
@@ -141,7 +140,7 @@ def collab_tsne(df):
     y=tSNE_result[:,1]
 
     #person_df = pd.DataFrame(person_list,columns=['p'])
-    df = df.sort_values(by='Email')
+    df = df.sort_values(by='ID')
 
     df['x']=x
     df['y']=y
@@ -189,7 +188,7 @@ def api_collab(text:str,method:str='no'):
         df.rename(columns={
             'org':'Org',
             'name':'Name',
-            'email':'Email',
+            'person_id':'ID',
             'score':'Score'
             }
             ,inplace=True
@@ -197,7 +196,7 @@ def api_collab(text:str,method:str='no'):
         print(df.shape)
 
 
-        return df[['Name','Email','Org','Score']]
+        return df[['Name','ID','Org','Score']]
     else:
         return df, {}
 
@@ -225,7 +224,7 @@ def plotly_scatter_plot(df,top=12):
         y="y", 
         color="org-name",
         symbol="org-name",
-        hover_data=['email']
+        hover_data=['person_id']
         )
     fig.update_layout(legend_title_text=f'Organisation (>{top} people)')
     return fig
@@ -260,14 +259,14 @@ def run_tsne(query:str='data science'):
             'x':0,
             'y':0,
             'org-name':'query',
-            'email':v['q_sent_text']
+            'person_id':v['q_sent_text']
         })
 
     logger.info(vec_data)
     # create two lists of vectors to run cosine on
     v1 = vec_list
     v2 = list(summary_df['vector'])
-    v2_text = list(summary_df['email'])
+    v2_text = list(summary_df['person_id'])
     logger.info(f'{np.array(v1).shape} {np.array(v2).shape}')
     aaa = distance.cdist(v1, v2, 'cosine')
 
@@ -278,13 +277,13 @@ def run_tsne(query:str='data science'):
     for v in vec_res:
         for i in range(len(aaa[vcount])):
             new_data.append({
-                'email1':v['q_sent_text'],
-                'email2':v2_text[i],
+                'person_id1':v['q_sent_text'],
+                'person_id2':v2_text[i],
                 'score':1-aaa[vcount][i]
             }),
             new_data.append({
-                'email2':v['q_sent_text'],
-                'email1':v2_text[i],
+                'person_id2':v['q_sent_text'],
+                'person_id1':v2_text[i],
                 'score':1-aaa[vcount][i]
             }),
         vcount+=1
@@ -295,8 +294,8 @@ def run_tsne(query:str='data science'):
             cos = distance.cosine(vec_res[i]['vector'],vec_res[j]['vector'])
             logger.info(f'{i} {j} {1-cos}')
             new_data.append({
-                    'email1':vec_res[i]['q_sent_text'],
-                    'email2':vec_res[j]['q_sent_text'],
+                    'person_id1':vec_res[i]['q_sent_text'],
+                    'person_id2':vec_res[j]['q_sent_text'],
                     'score':1-cos
                 }),
 
@@ -308,17 +307,16 @@ def run_tsne(query:str='data science'):
 
     # add query data to summary_df
     vec_df = pd.DataFrame(vec_data)
-    #vec_df['email']=vec_df['org-name']
     # add to existing
     summary_df = pd.concat([summary_df,vec_df])
-    #sort by email to match up with pivot table
-    summary_df = summary_df.sort_values(by='email')
+    #sort by id to match up with pivot table
+    summary_df = summary_df.sort_values(by='person_id')
 
-    # this filtering is due to some email addresses dropping out with org filter in aaa.py
-    email_check = list(summary_df['email']) + sent_list
-    pp_df = pp_df[(pp_df['email1'].isin(email_check)) & (pp_df['email2'].isin(email_check))]
+    # this filtering is due to some person_id addresses dropping out with org filter in aaa.py
+    person_check = list(summary_df['person_id']) + sent_list
+    pp_df = pp_df[(pp_df['person_id1'].isin(person_check)) & (pp_df['person_id2'].isin(person_check))]
 
-    pp_df_pivot = pp_df.pivot(index='email1', columns='email2', values='score')
+    pp_df_pivot = pp_df.pivot(index='person_id1', columns='person_id2', values='score')
     pp_df_pivot = pp_df_pivot.fillna(1)
     tSNE_result=tSNE.fit_transform(pp_df_pivot)
     x=tSNE_result[:,0]
