@@ -110,6 +110,7 @@ def api_person(text:str,top:int=100):
     df = (
         pd.json_normalize(r.json()["res"])
     )
+    logger.info(df.head())
     df['score'] = df['score'].round(4)
     df.rename(columns={'text':'Text','score':'TF-IDF Score'},inplace=True)
     print(df.shape)
@@ -337,4 +338,3 @@ def run_tsne(query:str='data science'):
 
     fig = plotly_scatter_plot(summary_df)
     return fig
-

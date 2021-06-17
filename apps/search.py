@@ -19,7 +19,6 @@ env.read_env()
 cyto.load_extra_layouts()
 
 app = dash.Dash(external_stylesheets = [dbc.themes.BOOTSTRAP])
-app.title = "Researcher Searcher - UoB Data Science Network"
 
 # API globals
 #API_URL = "https://bdsn-api.mrcieu.ac.uk"

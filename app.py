@@ -3,7 +3,7 @@ import dash_bootstrap_components as dbc
 
 #app = dash.Dash(__name__, suppress_callback_exceptions=True)
 app = dash.Dash(__name__,external_stylesheets = [dbc.themes.BOOTSTRAP])
-app.title = 'Researcher Searcher'
+app.title = "Researcher Searcher - Bristol Medical School (PHS)"
 
 navbar = dbc.NavbarSimple(
     children=[

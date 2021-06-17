@@ -8,10 +8,9 @@ from app import app, navbar, footer
 from functions import api_collab
 
 app = dash.Dash(external_stylesheets = [dbc.themes.BOOTSTRAP])
-app.title = "Researcher Searcher - UoB Data Science Network"
 
 # API globals
-starter_query="jean.golding@bristol.ac.uk"
+starter_query="https://research-information.bris.ac.uk/en/persons/jean-golding"
 
 # get some data to start with
 df = api_collab(text=starter_query)
