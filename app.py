@@ -13,7 +13,7 @@ navbar = dbc.NavbarSimple(
         dbc.NavItem(dbc.NavLink("About", href="about")),
         dbc.NavItem(dbc.NavLink("API", href="https://bdsn-api.mrcieu.ac.uk")),
     ],
-    brand="Researcher Searcher - UoB Data Science Network",
+    brand="Researcher Searcher - Bristol Medical School (PHS)",
     brand_href="/",
     color="primary",
     dark=True,
