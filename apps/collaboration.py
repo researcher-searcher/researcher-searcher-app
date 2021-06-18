@@ -26,10 +26,8 @@ layout = html.Div([
                         id='collab-input-1-state', 
                         type='text',
                         value=starter_query                    )
-                ]),
-            ]),
-            html.Br(),
-            dbc.Row([
+                ],width=6),
+
                 dbc.Col([
                     html.H5 ('Method:'),
                     dcc.Dropdown(

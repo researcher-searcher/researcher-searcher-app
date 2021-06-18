@@ -25,8 +25,8 @@ layout = html.Div([
                     dbc.Input(
                         id='person-input-1-state', 
                         type='text',
-                        value=starter_query                    )
-                ]),
+                        value=starter_query)
+                ],width=6),
                 dbc.Col([
                     html.Br(),
                     html.Button(id='person-submit-button-state', n_clicks=0, children='Submit',style={"padding": "10px"}),
