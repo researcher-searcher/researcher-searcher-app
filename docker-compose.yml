@@ -5,8 +5,8 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: always
-    container_name: rs-app
+    container_name: rs-app-$NAME
     ports:
-      - 8765:8050
+      - $APP_PORT:8050
     volumes:
       - ./:/app

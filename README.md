@@ -10,3 +10,15 @@ python index.py
 `mkdir data`
 
 Get `tsne.csv.gz` from researcher-searcher-search output and add to `data`
+
+Make `.env`
+
+```
+API_URL=
+NAME=
+APP_PORT=
+```
+
+### Production
+
+`docker-compose up -d`
