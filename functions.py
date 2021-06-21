@@ -216,7 +216,7 @@ def api_vector(text:str,method:str='sent'):
     #)
     #return df
 
-def plotly_scatter_plot(df,top=12):
+def plotly_scatter_plot(df,top=1):
     df = df[(df['org_count']>top) | (df['origin']=='query')]
     logger.info(f'\n{df.head()}')
     fig = px.scatter(
@@ -225,7 +225,7 @@ def plotly_scatter_plot(df,top=12):
         y="y", 
         color="org-name",
         symbol="org-name",
-        hover_data=['person_id']
+        hover_data=['name']
         )
     fig.update_layout(legend_title_text=f'Organisation (>{top} people)')
     return fig
