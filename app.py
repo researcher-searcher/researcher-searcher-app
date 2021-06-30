@@ -1,8 +1,8 @@
 import dash
 import dash_bootstrap_components as dbc
 
-#app = dash.Dash(__name__, suppress_callback_exceptions=True)
-app = dash.Dash(__name__,external_stylesheets = [dbc.themes.BOOTSTRAP])
+# app = dash.Dash(__name__, suppress_callback_exceptions=True)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.title = "Researcher Searcher - Bristol Medical School (PHS)"
 
 navbar = dbc.NavbarSimple(
@@ -19,10 +19,7 @@ navbar = dbc.NavbarSimple(
     dark=True,
 )
 
-footer = dbc.NavbarSimple(
-    color="primary",
-    dark=True,
-)
+footer = dbc.NavbarSimple(color="primary", dark=True,)
 
 server = app.server
 app.config.suppress_callback_exceptions = True

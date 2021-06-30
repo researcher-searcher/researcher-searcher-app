@@ -12,17 +12,24 @@ import pandas as pd
 from app import app, navbar, footer
 from loguru import logger
 
-app = dash.Dash(external_stylesheets = [dbc.themes.BOOTSTRAP])
+app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-layout = html.Div([
+layout = html.Div(
+    [
         navbar,
-        dbc.Container([
-            dbc.Row([
-                dbc.Col([
-                    html.Br(),
-                    html.Img(src=app.get_asset_url('overview-images.png'), style={'width':'100%'}),
-
-                    dcc.Markdown('''
+        dbc.Container(
+            [
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            [
+                                html.Br(),
+                                html.Img(
+                                    src=app.get_asset_url("overview-images.png"),
+                                    style={"width": "100%"},
+                                ),
+                                dcc.Markdown(
+                                    """
                     ### Search
 
                     ##### 5 methods:
@@ -74,12 +81,14 @@ layout = html.Div([
 
                     \*All vectors were created using [Google Universal Sentence Encoder via Spacy](https://spacy.io/universe/project/spacy-universal-sentence-encoder)
 
-                    For more information on the construction of this data set, see 
-                    this GitHub repository - https://github.com/elswob/researcher-searcher-jgi
-
-                    ''')
-                ])
-            ])
-        ]), 
-        footer
-    ])
+                    """
+                                ),
+                            ]
+                        )
+                    ]
+                )
+            ]
+        ),
+        footer,
+    ]
+)
