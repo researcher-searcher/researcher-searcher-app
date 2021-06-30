@@ -96,7 +96,6 @@ def api_person(text: str, top: int = 100):
     logger.info(df.head())
     df["score"] = df["score"].round(4)
     df.rename(columns={"text": "Text", "score": "TF-IDF Score"}, inplace=True)
-    print(df.shape)
     return df
 
 
@@ -170,7 +169,6 @@ def api_collab(text: str, method: str = "yes"):
             columns={"org": "Org", "name": "Name", "person_id": "ID", "score": "Score"},
             inplace=True,
         )
-        print(df.shape)
 
         return df[["Name", "ID", "Org", "Score"]]
     else:
