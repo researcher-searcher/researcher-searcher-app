@@ -14,6 +14,9 @@ env.read_env()
 API_URL = env.str("API_URL")
 
 def api_search(text:str,method:str='full'):
+    # convert newlines to fullstops where necessary
+    text = text.strip().replace("\n",". ")
+    logger.info(text)
     logger.debug(f'api_search {text} {method}')
     endpoint = "/search/"
     url = f"{API_URL}{endpoint}"
