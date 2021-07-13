@@ -1,4 +1,4 @@
-### Local dev
+### Local dev
 
 ```
 . ./venv/bin/activate
