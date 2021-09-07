@@ -1,8 +1,16 @@
 import dash
 import dash_bootstrap_components as dbc
 
+from environs import Env
+
+env = Env()
+env.read_env()
+
+TITLE=env.str("TITLE")
+API=env.str("API_URL")
+
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-app.title = "Researcher Searcher - Bristol Medical School (PHS)"
+app.title = TITLE
 
 navbar = dbc.NavbarSimple(
     children=[
@@ -10,9 +18,9 @@ navbar = dbc.NavbarSimple(
         dbc.NavItem(dbc.NavLink("Person", href="person")),
         dbc.NavItem(dbc.NavLink("Collaboration", href="collaboration")),
         dbc.NavItem(dbc.NavLink("About", href="about")),
-        dbc.NavItem(dbc.NavLink("API", href="https://rs-phs-api.mrcieu.ac.uk")),
+        dbc.NavItem(dbc.NavLink("API", href=API)),
     ],
-    brand="Researcher Searcher - Bristol Medical School (PHS)",
+    brand=f"Researcher Searcher - {TITLE}",
     brand_href="/",
     color="primary",
     dark=True,

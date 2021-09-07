@@ -19,6 +19,7 @@ NAME=
 APP_PORT=
 EXAMPLE_PERSON=
 EXAMPLE_QUERY=
+TITLE=
 ```
 
 ### Production
