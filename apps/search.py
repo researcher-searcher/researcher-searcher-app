@@ -23,11 +23,11 @@ app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 # API globals
 API_URL = env.str("API_URL")
 logger.info(f"Using API: {API_URL}")
-starter_query = "logistic regression. genome wide association studies"
+example_query = env.str("EXAMPLE_QUERY")
 starter_method = "combine"
 
 # get some data to start with
-df = api_search(text=starter_query, method=starter_method).head(n=50)
+df = api_search(text=example_query, method=starter_method).head(n=50)
 
 
 def create_graph_data():
@@ -104,7 +104,7 @@ layout = html.Div(
                                 # html.Span(id='eg1',children='machine learning'),
                                 dbc.Textarea(
                                     id="search-input-1-state",
-                                    value=starter_query,
+                                    value=example_query,
                                     style={"width": "100%", "height": 100},
                                 ),
                             ]

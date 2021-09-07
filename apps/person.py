@@ -6,14 +6,17 @@ import dash_table
 from dash.dependencies import Input, Output, State
 from app import app, navbar, footer
 from functions import api_person
+from environs import Env
+
+env = Env()
+env.read_env()
+
+example_person = env.str("EXAMPLE_PERSON")
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-# API globals
-starter_query = "https://research-information.bris.ac.uk/en/persons/jean-golding"
-
 # get some data to start with
-df = api_person(text=starter_query)
+df = api_person(text=example_person)
 
 layout = html.Div(
     [
@@ -29,7 +32,7 @@ layout = html.Div(
                                 dbc.Input(
                                     id="person-input-1-state",
                                     type="text",
-                                    value=starter_query,
+                                    value=example_person,
                                 ),
                             ],
                             width=6,

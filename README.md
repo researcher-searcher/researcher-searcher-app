@@ -17,6 +17,8 @@ Make `.env`
 API_URL=
 NAME=
 APP_PORT=
+EXAMPLE_PERSON=
+EXAMPLE_QUERY=
 ```
 
 ### Production

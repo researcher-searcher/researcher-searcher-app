@@ -6,14 +6,16 @@ import dash_table
 from dash.dependencies import Input, Output, State
 from app import app, navbar, footer
 from functions import api_collab
+from environs import Env
 
+env = Env()
+env.read_env()
+
+example_person = env.str("EXAMPLE_PERSON")
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-# API globals
-starter_query = "https://research-information.bris.ac.uk/en/persons/jean-golding"
-
 # get some data to start with
-df = api_collab(text=starter_query)
+df = api_collab(text=example_person)
 
 layout = html.Div(
     [
@@ -29,7 +31,7 @@ layout = html.Div(
                                 dbc.Input(
                                     id="collab-input-1-state",
                                     type="text",
-                                    value=starter_query,
+                                    value=example_person,
                                 ),
                             ],
                             width=6,
@@ -43,7 +45,7 @@ layout = html.Div(
                                         {"label": "No shared output", "value": "no"},
                                         {"label": "All", "value": "all"},
                                     ],
-                                    value="yes",
+                                    value="no",
                                     id="collab-input-2-state",
                                 ),
                             ]

@@ -109,7 +109,10 @@ def run_person(n_clicks, value, input1):
         return dash.no_update
     else:
         df = api_person(text=input1)
-        return df.to_dict("records"), value
+        try:
+            return df.to_dict("records"), value
+        except:
+            return [],value
 
 
 # callback for collab page
@@ -127,8 +130,10 @@ def run_collab(n_clicks, value, input1, input2):
         return dash.no_update
     else:
         df = api_collab(text=input1, method=input2)
-        return df.to_dict("records"), value
-
+        try:
+            return df.to_dict("records"), value
+        except:
+            return [],value
 
 # callback for home page
 # @app.callback(Output('home-fig', 'figure'),

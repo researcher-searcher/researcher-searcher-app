@@ -155,7 +155,7 @@ def collab_tsne(df):
     return fig
 
 
-def api_collab(text: str, method: str = "yes"):
+def api_collab(text: str, method: str = "no"):
     logger.debug(f"api_collab {text} {method}")
     endpoint = "/collab/"
     url = f"{API_URL}{endpoint}"
