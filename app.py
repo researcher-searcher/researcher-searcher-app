@@ -7,7 +7,7 @@ env = Env()
 env.read_env()
 
 TITLE=env.str("TITLE")
-API=env.str("API_URL")
+API=env.str("API_NAME")
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.title = TITLE

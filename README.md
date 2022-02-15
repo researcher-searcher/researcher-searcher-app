@@ -14,7 +14,8 @@ Get `tsne.csv.gz` from researcher-searcher-search output and add to `data`
 Make `.env`
 
 ```
-API_URL=
+API_NAME="" # the domain name of the API
+API_URL="" # the URL of the API (can differ from name for internal connections)
 NAME=
 APP_PORT=
 EXAMPLE_PERSON=
