@@ -18,6 +18,8 @@ app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 # get some data to start with
 df = api_person(text=example_person)
 
+suggestions = ["valid", "options", "as", "suggestions"];
+
 layout = html.Div(
     [
         navbar,
@@ -29,10 +31,19 @@ layout = html.Div(
                         dbc.Col(
                             [
                                 html.H5("Query:"),
-                                dbc.Input(
-                                    id="person-input-1-state",
-                                    type="text",
-                                    value=example_person,
+                                #dbc.Input(
+                                #    id="person-input-1-state",
+                                #    type="text",
+                                #    value=example_person,
+                                #),
+                                html.Datalist(
+                                    id='list-suggested-inputs', 
+                                    children=[html.Option(value=word) for word in suggestions]
+                                    ),
+                                dbc.Input(id='person-input-1-state',
+                                    type='text',
+                                    list='list-suggested-inputs',
+                                    value=''
                                 ),
                             ],
                             width=6,
