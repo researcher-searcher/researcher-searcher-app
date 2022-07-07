@@ -1,19 +1,20 @@
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
+from dash import dash_table
 import dash_bootstrap_components as dbc
-import dash_table
 from dash.dependencies import Input, Output, State
 import plotly.graph_objects as go
 import requests
 import numpy as np
 import pandas as pd
-from app import app, navbar, footer
+#from app import app, navbar, footer
 from loguru import logger
 from functions import api_vector, plotly_scatter_plot, run_tsne
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
+dash.register_page(__name__)
 
 def read_tsne():
     TSNE_DF = "data/tsne.csv.gz"
@@ -40,7 +41,7 @@ fig = plotly_scatter_plot(df)
 
 layout = html.Div(
     [
-        navbar,
+        #navbar,
         dbc.Container(
             [
                 dbc.Row(
@@ -72,6 +73,6 @@ layout = html.Div(
                 # ]),
             ]
         ),
-        footer,
+        #footer,
     ]
 )

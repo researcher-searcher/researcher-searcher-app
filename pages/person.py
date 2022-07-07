@@ -40,7 +40,8 @@ layout = html.Div(
                                     id='list-suggested-inputs', 
                                     children=[html.Option(value=word) for word in suggestions]
                                     ),
-                                dbc.Input(id='person-input-1-state',
+                                dbc.Input(
+                                    id='person-input-1-state',
                                     type='text',
                                     list='list-suggested-inputs',
                                     value=''

@@ -1,10 +1,10 @@
-import dash_core_components as dcc
 import dash
-import dash_html_components as html
+from dash import dcc
+from dash import html
 import plotly.express as px
 import time
 from dash.dependencies import Input, Output, State
-from apps.search import api_search
+#from apps.search import api_search
 from functions import (
     api_search,
     api_search_person,
@@ -14,11 +14,15 @@ from functions import (
     run_tsne,
 )
 from app import app, server
-from apps import home, search, person, collaboration, about
+from pages import home, search, person, collaboration, about
 from loguru import logger
 
 app.layout = html.Div(
-    [dcc.Location(id="url", refresh=False), html.Div(id="page-content")]
+    [
+        dcc.Location(id="url", refresh=False), html.Div(id="page-content"),
+        dash.page_container
+    ]
+    
 )
 
 

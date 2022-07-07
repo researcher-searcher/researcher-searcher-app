@@ -9,7 +9,7 @@ env.read_env()
 TITLE=env.str("TITLE")
 API=env.str("API_NAME")
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], use_pages=True)
 app.title = TITLE
 
 navbar = dbc.NavbarSimple(
