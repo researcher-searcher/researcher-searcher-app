@@ -14,6 +14,8 @@ from environs import Env
 env = Env()
 env.read_env()
 
+dash.register_page(__name__, path_template="/search/<search_text>")
+
 # load extra layouts
 cyto.load_extra_layouts()
 

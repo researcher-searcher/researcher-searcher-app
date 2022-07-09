@@ -10,6 +10,8 @@ from environs import Env
 env = Env()
 env.read_env()
 
+dash.register_page(__name__)
+
 example_person = env.str("EXAMPLE_PERSON")
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 

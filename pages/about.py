@@ -13,6 +13,8 @@ from loguru import logger
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
+dash.register_page(__name__)
+
 layout = html.Div(
     [
         dbc.Container(

@@ -1,9 +1,10 @@
 import dash
-from dash import dcc
-from dash import html
+from dash import dcc, html
 import plotly.express as px
 import time
 from dash.dependencies import Input, Output, State
+import dash_bootstrap_components as dbc
+
 #from apps.search import api_search
 from functions import (
     api_search,
@@ -22,12 +23,15 @@ from components import navbar
 
 # define the navbar
 nav = navbar.Navbar()
+footer = dbc.NavbarSimple(color="primary", dark=True,)
 
 app.layout = html.Div(
     [
         dcc.Location(id="url", refresh=False), 
         nav,
         html.Div(id="page-content"),
+        html.Div(),
+        footer
     ]
     
 )

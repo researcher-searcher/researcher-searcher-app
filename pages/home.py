@@ -12,9 +12,9 @@ import pandas as pd
 from loguru import logger
 from functions import api_vector, plotly_scatter_plot, run_tsne
 
-app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+#app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-dash.register_page(__name__)
+dash.register_page(__name__,path='/')
 
 def read_tsne():
     TSNE_DF = "data/tsne.csv.gz"
