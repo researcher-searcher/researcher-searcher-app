@@ -28,3 +28,7 @@ python index.py
 ### Production
 
 `docker-compose up -d`
+
+### multi page
+
+https://levelup.gitconnected.com/creating-a-multi-page-dash-application-ab38b4b91bf5

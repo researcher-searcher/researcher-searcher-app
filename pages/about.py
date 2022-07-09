@@ -9,14 +9,12 @@ import plotly.graph_objects as go
 import requests
 import numpy as np
 import pandas as pd
-from app import app, navbar, footer
 from loguru import logger
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 layout = html.Div(
     [
-        navbar,
         dbc.Container(
             [
                 dbc.Row(
@@ -89,6 +87,5 @@ layout = html.Div(
                 )
             ]
         ),
-        footer,
     ]
 )

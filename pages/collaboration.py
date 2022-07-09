@@ -4,7 +4,6 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 import dash_table
 from dash.dependencies import Input, Output, State
-from app import app, navbar, footer
 from functions import api_collab
 from environs import Env
 
@@ -19,7 +18,6 @@ df = api_collab(text=example_person)
 
 layout = html.Div(
     [
-        navbar,
         dbc.Container(
             [
                 html.Br(),
@@ -106,6 +104,5 @@ layout = html.Div(
                 ),
             ]
         ),
-        footer,
     ]
 )

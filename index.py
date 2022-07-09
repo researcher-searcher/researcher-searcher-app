@@ -13,18 +13,24 @@ from functions import (
     api_collab,
     run_tsne,
 )
-from app import app, server
+from app import app
 from pages import home, search, person, collaboration, about
 from loguru import logger
 
+# Connect the navbar to the index
+from components import navbar
+
+# define the navbar
+nav = navbar.Navbar()
+
 app.layout = html.Div(
     [
-        dcc.Location(id="url", refresh=False), html.Div(id="page-content"),
-        dash.page_container
+        dcc.Location(id="url", refresh=False), 
+        nav,
+        html.Div(id="page-content"),
     ]
     
 )
-
 
 @app.callback(Output("page-content", "children"), Input("url", "pathname"))
 def display_page(pathname):

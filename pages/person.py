@@ -4,7 +4,6 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 import dash_table
 from dash.dependencies import Input, Output, State
-from app import app, navbar, footer
 from functions import api_person
 from environs import Env
 
@@ -22,7 +21,6 @@ suggestions = ["valid", "options", "as", "suggestions"];
 
 layout = html.Div(
     [
-        navbar,
         dbc.Container(
             [
                 html.Br(),
@@ -95,6 +93,5 @@ layout = html.Div(
                 ),
             ]
         ),
-        footer,
     ]
 )
