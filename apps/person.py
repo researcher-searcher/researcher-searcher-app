@@ -36,15 +36,20 @@ layout = html.Div(
                                 #    type="text",
                                 #    value=example_person,
                                 #),
-                                html.Datalist(
-                                    id='list-suggested-inputs', 
-                                    children=[html.Option(value=word) for word in suggestions]
-                                    ),
-                                dbc.Input(id='person-input-1-state',
+                                #html.Datalist(
+                                #    id='list-suggested-inputs', 
+                                #    children=[html.Option(value=word) for word in suggestions]
+                                #    ),
+                                dbc.Input(
+                                    #id='person-input-1-state',
+                                    id=dict(type='searchData', id='dest-loc'),
                                     type='text',
                                     list='list-suggested-inputs',
-                                    value=''
+                                    value='',
+                                    persistence=False,
+                                    autocomplete="off",
                                 ),
+                                html.Datalist(id='list-suggested-inputs', children=[html.Option(value='empty')])
                             ],
                             width=6,
                         ),

@@ -99,6 +99,15 @@ def api_person(text: str, top: int = 100):
     df.rename(columns={"text": "Text", "score": "TF-IDF Score"}, inplace=True)
     return df
 
+def api_lookup(text: str, top: int = 100):
+    logger.debug(f"api_lookup {text} {top}")
+    endpoint = "/lookup/"
+    url = f"{API_URL}{endpoint}"
+    params = {"query": text, "limit": top}
+    r = requests.get(url, params=params)
+    df = pd.json_normalize(r.json()["res"])
+    logger.info(df.head())
+    return df
 
 def collab_tsne(df):
 

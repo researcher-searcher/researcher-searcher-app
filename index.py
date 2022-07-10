@@ -11,6 +11,7 @@ from functions import (
     api_search_output,
     api_person,
     api_collab,
+    api_lookup,
     run_tsne,
 )
 from app import app, server
@@ -100,17 +101,25 @@ def run_search(n_clicks, slider_val, value, input1, input2):
 @app.callback(
     Output("person-table", "data"),
     Output("person-loading-output-1", "children"),
+    Output('list-suggested-inputs', 'children'),
     Input("person-submit-button-state", "n_clicks"),
-    Input("person-submit-button-state", "value"),
+    #Input("person-submit-button-state", "value"),
+    Input({"id": 'dest-loc', "type": "searchData"}, "value"),
     State("person-input-1-state", "value"),
+    prevent_initial_call=True
 )
 def run_person(n_clicks, value, input1):
     if n_clicks == 0:
         return dash.no_update
     else:
         df = api_person(text=input1)
+        if len(value) < 4:
+            raise dash.exceptions.PreventUpdate
+        else:
+            df2 = api_lookup(text=input1)
+            print(df2)
         try:
-            return df.to_dict("records"), value
+            return df.to_dict("records"), value, df2.to_dict("records")
         except:
             return [],value
 
