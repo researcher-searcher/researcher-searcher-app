@@ -19,6 +19,7 @@ app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 df = api_person(text=example_person)
 
 suggestions = ["valid", "options", "as", "suggestions"];
+options=[html.Option(value=x) for x in ["Chocolate", "Coconut", "Mint", "Strawberry"]]
 
 layout = html.Div(
     [
@@ -40,16 +41,20 @@ layout = html.Div(
                                 #    id='list-suggested-inputs', 
                                 #    children=[html.Option(value='empty')]
                                 #    ),
-                                dbc.Input(
-                                    #id='person-input-1-state',
-                                    id='dest-loc',
-                                    type='text',
-                                    list='list-suggested-inputs',
-                                    value='',
-                                    persistence=False,
-                                    autocomplete="off",
-                                ),
-                                html.Datalist(id='list-suggested-inputs', children=[html.Option(value='empty')])
+                                html.Div([
+
+                                    dbc.Input(
+                                        #id='person-input-1-state',
+                                        id='dest-loc',
+                                        #type='text',
+                                        list='list-suggested-inputs',
+                                        #value='',
+                                        placeholder="Enter Name...",
+                                        persistence=False,
+                                        autocomplete="off",
+                                    ),
+                                    html.Datalist(id='list-suggested-inputs', children=[html.Option(value='empty')]),
+                                ])
                             ],
                             width=6,
                         ),
