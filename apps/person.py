@@ -45,7 +45,7 @@ layout = html.Div(
 
                                     dbc.Input(
                                         #id='person-input-1-state',
-                                        id='dest-loc',
+                                        id=dict(type='searchData', id='dest-loc'),
                                         #type='text',
                                         list='list-suggested-inputs',
                                         #value='',
