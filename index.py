@@ -109,16 +109,21 @@ def run_search(n_clicks, slider_val, value, input1, input2):
     prevent_initial_call=True
 )
 def run_person(n_clicks, value):
-    # remove this
+    # if submit button not pressed, run the autocomplete
+    lookup_data={}
     if n_clicks == 0:
         if len(value) < 3:
             raise dash.exceptions.PreventUpdate
         else: 
             df_lookup = api_lookup(text=value)
+            lookup_names = df_lookup['person_name'].values()
+            lookup_ids = df_lookup['pid'].values()
+            lookup_data = dict(zip(lookup_names, lookup_ids))
             person_list = list(df_lookup['person_name'].values())
             return [html.Option(value=l) for l in person_list], []
     else:
-        df = api_person(text=value)
+        person_id = lookup_data[value]
+        df = api_person(text=person_id)
         return [html.Option(value=l) for l in person_list], df.to_dict("records")
  
 

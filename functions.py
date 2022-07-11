@@ -105,7 +105,13 @@ def api_lookup(text: str, top: int = 100):
     url = f"{API_URL}{endpoint}"
     params = {"query": text, "limit": top}
     r = requests.get(url, params=params)
-    logger.debug(list(r.json()["res"]['person_name'].values()))
+    res = r.json()["res"]
+    logger.debug(list(res['person_name'].values()))
+    logger.debug(res)
+    lookup_names = res['person_name'].values()
+    lookup_ids = res['pid'].values()
+    lookup_data = dict(zip(lookup_names, lookup_ids))
+    logger.debug(lookup_data)
     #df = pd.json_normalize(r.json()["res"])
     #logger.info(df.head())
     #df_lookup_dic = df.to_dict("records")
