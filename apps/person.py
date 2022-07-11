@@ -53,7 +53,7 @@ layout = html.Div(
                                         persistence=False,
                                         autocomplete="off",
                                     ),
-                                    html.Datalist(id='list-suggested-inputs', children=[html.Option(value='empty')]),
+                                    html.Datalist(id='list-suggested-inputs', children=[html.Option(value='')]),
                                 ])
                             ],
                             width=6,

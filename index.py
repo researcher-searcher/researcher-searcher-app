@@ -101,6 +101,7 @@ def run_search(n_clicks, slider_val, value, input1, input2):
     #Output("person-table", "data"),
     #Output("person-loading-output-1", "children"),
     Output('list-suggested-inputs', 'children'),
+    Output("person-table", "data"),
     Input("person-submit-button-state", "n_clicks"),
     #Input("person-submit-button-state", "value"),
     Input({"id": 'dest-loc', "type": "searchData"}, "value"),
@@ -109,18 +110,17 @@ def run_search(n_clicks, slider_val, value, input1, input2):
 )
 def run_person(n_clicks, value):
     # remove this
-    if n_clicks == 100:
-        return dash.no_update
-    else:
+    if n_clicks == 0:
         if len(value) < 3:
             raise dash.exceptions.PreventUpdate
-        else:
-            try:
-                df_lookup = api_lookup(text=value)
-                person_list = list(df_lookup['person_name'].values())
-                return [html.Option(value=l) for l in person_list]
-            except:
-                return [],value,[]
+        else: 
+            df_lookup = api_lookup(text=value)
+            person_list = list(df_lookup['person_name'].values())
+            return [html.Option(value=l) for l in person_list], []
+    else:
+        df = api_person(text=value)
+        return [html.Option(value=l) for l in person_list], df.to_dict("records")
+ 
 
 
 # callback for collab page
