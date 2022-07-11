@@ -99,29 +99,32 @@ def run_search(n_clicks, slider_val, value, input1, input2):
 
 # callback for person page
 @app.callback(
-    Output("person-table", "data"),
-    Output("person-loading-output-1", "children"),
+    #Output("person-table", "data"),
+    #Output("person-loading-output-1", "children"),
     Output('list-suggested-inputs', 'children'),
     Input("person-submit-button-state", "n_clicks"),
     #Input("person-submit-button-state", "value"),
-    Input({"id": 'dest-loc', "type": "searchData"}, "value"),
+    Input("dest-loc", "value"),
     State("dest-loc", "value"),
     prevent_initial_call=True
 )
 def run_person(n_clicks, value, input1):
-    if n_clicks == 0:
+    if n_clicks == 100:
         return dash.no_update
     else:
-        if len(value) < 4:
+        if len(value) < 1:
             raise dash.exceptions.PreventUpdate
         else:
-            df2 = api_lookup(text=input1)
-            print(df2)
-            df = api_person(text=input1)
+            df_lookup = api_lookup(text=input1)
+            person_list = list(df_lookup['person_name'].values())
+            #df_lookup_dic = df_lookup.to_dict("records")
+            #print(df_lookup_dic['person_name'].values().tolist())
+            #df = api_person(text=input1)
         try:
-            return df.to_dict("records"), value, df2.to_dict("records")
+            #return df.to_dict("records"), value, person_list
+            return person_list
         except:
-            return [],value
+            return [],value,[]
 
 
 # callback for collab page

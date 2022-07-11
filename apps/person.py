@@ -38,11 +38,11 @@ layout = html.Div(
                                 #),
                                 #html.Datalist(
                                 #    id='list-suggested-inputs', 
-                                #    children=[html.Option(value=word) for word in suggestions]
+                                #    children=[html.Option(value='empty')]
                                 #    ),
                                 dbc.Input(
                                     #id='person-input-1-state',
-                                    id=dict(type='searchData', id='dest-loc'),
+                                    id='dest-loc',
                                     type='text',
                                     list='list-suggested-inputs',
                                     value='',

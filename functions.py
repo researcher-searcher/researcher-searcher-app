@@ -105,9 +105,13 @@ def api_lookup(text: str, top: int = 100):
     url = f"{API_URL}{endpoint}"
     params = {"query": text, "limit": top}
     r = requests.get(url, params=params)
-    df = pd.json_normalize(r.json()["res"])
-    logger.info(df.head())
-    return df
+    logger.debug(list(r.json()["res"]['person_name'].values()))
+    #df = pd.json_normalize(r.json()["res"])
+    #logger.info(df.head())
+    #df_lookup_dic = df.to_dict("records")
+    #logger.debug(df['person_name'])
+    #print(df_lookup_dic['person_name'].values().tolist())
+    return r.json()["res"]
 
 def collab_tsne(df):
 
