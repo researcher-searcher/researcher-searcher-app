@@ -1,4 +1,4 @@
-from dash import dcc, html
+from dash import dcc, html, callback_context
 import dash
 import plotly.express as px
 import time
@@ -110,21 +110,25 @@ def run_search(n_clicks, slider_val, value, input1, input2):
 )
 def run_person(n_clicks, value):
     # if submit button not pressed, run the autocomplete
-    lookup_data={}
-    if n_clicks == 0:
-        if len(value) < 3:
-            raise dash.exceptions.PreventUpdate
-        else: 
-            df_lookup = api_lookup(text=value)
-            lookup_names = df_lookup['person_name'].values()
-            lookup_ids = df_lookup['pid'].values()
-            lookup_data = dict(zip(lookup_names, lookup_ids))
-            person_list = list(df_lookup['person_name'].values())
-            return [html.Option(value=l) for l in person_list], []
-    else:
+    global lookup_data
+    changed_id = [p['prop_id'] for p in callback_context.triggered][0]
+
+    #f n_clicks == 0:
+    if 'person-submit-button-state' in changed_id:
         person_id = lookup_data[value]
         df = api_person(text=person_id)
-        return [html.Option(value=l) for l in person_list], df.to_dict("records")
+        n_clicks=None
+        return [value], df.to_dict("records")  
+    else:
+        df_lookup = api_lookup(text=value)
+        lookup_names = df_lookup['person_name'].values()
+        lookup_ids = df_lookup['pid'].values()
+        lookup_data = dict(zip(lookup_names, lookup_ids))
+        person_list = list(df_lookup['person_name'].values())
+        return [html.Option(value=l) for l in person_list], []
+
+
+
  
 
 
