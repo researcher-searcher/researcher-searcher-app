@@ -28,11 +28,14 @@ layout = html.Div(
                         dbc.Col(
                             [
                                 html.H5("Query:"),
-                                dbc.Input(
-                                    id="collab-input-1-state",
-                                    type="text",
-                                    value=example_person,
-                                ),
+                                    dbc.Input(
+                                        id=dict(type='searchData', id='collab-input-1-state'),
+                                        list='collab-list-suggested-inputs',
+                                        placeholder="Enter Name...",
+                                        persistence=False,
+                                        autocomplete="off",
+                                    ),
+                                    html.Datalist(id='collab-list-suggested-inputs', children=[html.Option(value='')]),
                             ],
                             width=6,
                         ),

@@ -32,9 +32,6 @@ layout = html.Div(
                         dbc.Col(
                             [
                                 html.H5("Query:"),
-        
-                                html.Div([
-
                                     dbc.Input(
                                         id=dict(type='searchData', id='dest-loc'),
                                         list='list-suggested-inputs',
@@ -43,7 +40,6 @@ layout = html.Div(
                                         autocomplete="off",
                                     ),
                                     html.Datalist(id='list-suggested-inputs', children=[html.Option(value='')]),
-                                ])
                             ],
                             width=6,
                         ),
