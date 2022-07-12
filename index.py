@@ -1,6 +1,5 @@
-import dash_core_components as dcc
+from dash import dcc, html, callback_context
 import dash
-import dash_html_components as html
 import plotly.express as px
 import time
 from dash.dependencies import Input, Output, State
@@ -11,6 +10,7 @@ from functions import (
     api_search_output,
     api_person,
     api_collab,
+    api_lookup,
     run_tsne,
 )
 from app import app, server
@@ -98,42 +98,72 @@ def run_search(n_clicks, slider_val, value, input1, input2):
 
 # callback for person page
 @app.callback(
+    Output('list-suggested-inputs', 'children'),
     Output("person-table", "data"),
-    Output("person-loading-output-1", "children"),
     Input("person-submit-button-state", "n_clicks"),
-    Input("person-submit-button-state", "value"),
-    State("person-input-1-state", "value"),
+    Input({"id": 'dest-loc', "type": "searchData"}, "value"),
+    prevent_initial_call=True
 )
-def run_person(n_clicks, value, input1):
-    if n_clicks == 0:
-        return dash.no_update
+def run_person(n_clicks, value):
+    # if submit button not pressed, run the autocomplete
+    global lookup_data
+    changed_id = [p['prop_id'] for p in callback_context.triggered][0]
+
+    #f n_clicks == 0:
+    if 'person-submit-button-state' in changed_id:
+        person_id = lookup_data[value]
+        df = api_person(text=person_id)
+        return [], df.to_dict("records")  
     else:
-        df = api_person(text=input1)
-        try:
-            return df.to_dict("records"), value
-        except:
-            return [],value
+        if len(value) < 3:
+            raise dash.exceptions.PreventUpdate
+        else:
+            df_lookup = api_lookup(text=value)
+            try:
+                lookup_names = df_lookup['person_name'].values()
+                lookup_ids = df_lookup['pid'].values()
+                lookup_data = dict(zip(lookup_names, lookup_ids))
+                person_list = list(df_lookup['person_name'].values())
+                return [html.Option(value=l) for l in person_list], []
+            except:
+                return [], []
 
 
 # callback for collab page
 @app.callback(
+    #Output('collab-list-suggested-inputs', 'children'),
+    #Output("collab-table", "data"),
+    #Output("collab-loading-output-1", "children"),
+    #Input("collab-submit-button-state", "n_clicks"),
+    #Input("collab-submit-button-state", "value"),
+    #State("collab-input-1-state", "value"),
+    #State("collab-input-2-state", "value"),
+
+    Output('collab-list-suggested-inputs', 'children'),
     Output("collab-table", "data"),
-    # Output('collab-plot', 'figure'),
-    Output("collab-loading-output-1", "children"),
     Input("collab-submit-button-state", "n_clicks"),
-    Input("collab-submit-button-state", "value"),
-    State("collab-input-1-state", "value"),
+    Input({"id": 'collab-input-1-state', "type": "searchData"}, "value"),
     State("collab-input-2-state", "value"),
+    prevent_initial_call=True
 )
-def run_collab(n_clicks, value, input1, input2):
-    if n_clicks == 0:
-        return dash.no_update
+def run_collab(n_clicks, input1, input2):
+    # if submit button not pressed, run the autocomplete
+    global lookup_data
+    changed_id = [p['prop_id'] for p in callback_context.triggered][0]
+    if 'collab-submit-button-state' in changed_id:
+        person_id = lookup_data[input1]
+        df = api_collab(text=person_id, method=input2)
+        return [], df.to_dict("records")
     else:
-        df = api_collab(text=input1, method=input2)
-        try:
-            return df.to_dict("records"), value
-        except:
-            return [],value
+        if len(input1) < 3:
+            raise dash.exceptions.PreventUpdate
+        else:
+            df_lookup = api_lookup(text=input1)
+            lookup_names = df_lookup['person_name'].values()
+            lookup_ids = df_lookup['pid'].values()
+            lookup_data = dict(zip(lookup_names, lookup_ids))
+            person_list = list(df_lookup['person_name'].values())
+            return [html.Option(value=l) for l in person_list], []
 
 # callback for home page
 # @app.callback(Output('home-fig', 'figure'),

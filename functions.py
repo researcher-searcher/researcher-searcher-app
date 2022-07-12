@@ -99,6 +99,22 @@ def api_person(text: str, top: int = 100):
     df.rename(columns={"text": "Text", "score": "TF-IDF Score"}, inplace=True)
     return df
 
+def api_lookup(text: str, top: int = 100):
+    logger.debug(f"api_lookup {text} {top}")
+    endpoint = "/lookup/"
+    url = f"{API_URL}{endpoint}"
+    params = {"query": text, "limit": top}
+    r = requests.get(url, params=params)
+    res = r.json()["res"]
+    #logger.debug(list(res['person_name'].values()))
+    #logger.debug(res)
+
+    #df = pd.json_normalize(r.json()["res"])
+    #logger.info(df.head())
+    #df_lookup_dic = df.to_dict("records")
+    #logger.debug(df['person_name'])
+    #print(df_lookup_dic['person_name'].values().tolist())
+    return res
 
 def collab_tsne(df):
 
@@ -162,15 +178,18 @@ def api_collab(text: str, method: str = "no"):
     params = {"query": text, "method": method}
     r = requests.get(url, params=params)
     df = pd.json_normalize(r.json()["res"])
-    res = df
     if not df.empty:
-        df["org"] = df["org"].str[:1]
+        # get first element of list if needed
+        try:
+            df["org"] = df["org"].str[0]
+        except:
+            logger.debug('org is not a list')
         df["score"] = df["score"].round(4)
         df.rename(
             columns={"org": "Org", "name": "Name", "person_id": "ID", "score": "Score"},
             inplace=True,
         )
-
+        logger.debug(df['Org'])
         return df[["Name", "ID", "Org", "Score"]]
     else:
         return df, {}

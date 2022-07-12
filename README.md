@@ -1,10 +1,3 @@
-### Local dev
-
-```
-. ./venv/bin/activate
-python index.py
-```
-
 ### setup
 
 `mkdir data`
@@ -21,6 +14,15 @@ APP_PORT=
 EXAMPLE_PERSON=
 EXAMPLE_QUERY=
 TITLE=
+```
+
+### Local dev
+
+```
+python3 -m venv venv
+. ./venv/bin/activate
+pip install -r requirements.txt
+python index.py
 ```
 
 ### Production
