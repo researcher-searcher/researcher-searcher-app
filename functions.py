@@ -178,15 +178,18 @@ def api_collab(text: str, method: str = "no"):
     params = {"query": text, "method": method}
     r = requests.get(url, params=params)
     df = pd.json_normalize(r.json()["res"])
-    res = df
     if not df.empty:
-        df["org"] = df["org"].str[:1]
+        # get first element of list if needed
+        try:
+            df["org"] = df["org"].str[0]
+        except:
+            logger.debug('org is not a list')
         df["score"] = df["score"].round(4)
         df.rename(
             columns={"org": "Org", "name": "Name", "person_id": "ID", "score": "Score"},
             inplace=True,
         )
-
+        logger.debug(df['Org'])
         return df[["Name", "ID", "Org", "Score"]]
     else:
         return df, {}

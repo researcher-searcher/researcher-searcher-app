@@ -117,7 +117,6 @@ def run_person(n_clicks, value):
     if 'person-submit-button-state' in changed_id:
         person_id = lookup_data[value]
         df = api_person(text=person_id)
-        n_clicks=None
         return [], df.to_dict("records")  
     else:
         if len(value) < 3:
@@ -129,10 +128,6 @@ def run_person(n_clicks, value):
             lookup_data = dict(zip(lookup_names, lookup_ids))
             person_list = list(df_lookup['person_name'].values())
             return [html.Option(value=l) for l in person_list], []
-
-
-
- 
 
 
 # callback for collab page
