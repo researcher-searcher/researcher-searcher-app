@@ -32,23 +32,12 @@ layout = html.Div(
                         dbc.Col(
                             [
                                 html.H5("Query:"),
-                                #dbc.Input(
-                                #    id="person-input-1-state",
-                                #    type="text",
-                                #    value=example_person,
-                                #),
-                                #html.Datalist(
-                                #    id='list-suggested-inputs', 
-                                #    children=[html.Option(value='empty')]
-                                #    ),
+        
                                 html.Div([
 
                                     dbc.Input(
-                                        #id='person-input-1-state',
                                         id=dict(type='searchData', id='dest-loc'),
-                                        #type='text',
                                         list='list-suggested-inputs',
-                                        #value='',
                                         placeholder="Enter Name...",
                                         persistence=False,
                                         autocomplete="off",

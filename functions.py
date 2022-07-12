@@ -106,15 +106,15 @@ def api_lookup(text: str, top: int = 100):
     params = {"query": text, "limit": top}
     r = requests.get(url, params=params)
     res = r.json()["res"]
-    logger.debug(list(res['person_name'].values()))
-    logger.debug(res)
+    #logger.debug(list(res['person_name'].values()))
+    #logger.debug(res)
 
     #df = pd.json_normalize(r.json()["res"])
     #logger.info(df.head())
     #df_lookup_dic = df.to_dict("records")
     #logger.debug(df['person_name'])
     #print(df_lookup_dic['person_name'].values().tolist())
-    return r.json()["res"]
+    return res
 
 def collab_tsne(df):
 
