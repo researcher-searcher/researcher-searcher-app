@@ -3,6 +3,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 import dash_table
+import pandas as pd
 from dash.dependencies import Input, Output, State
 from app import app, navbar, footer
 from functions import api_person
@@ -17,8 +18,8 @@ app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 # get some data to start with
 df = api_person(text=example_person)
+#df = pd.DataFrame() 
 
-suggestions = ["valid", "options", "as", "suggestions"];
 options=[html.Option(value=x) for x in ["Chocolate", "Coconut", "Mint", "Strawberry"]]
 
 layout = html.Div(

@@ -152,10 +152,12 @@ def run_collab(n_clicks, input1, input2):
     changed_id = [p['prop_id'] for p in callback_context.triggered][0]
     if 'collab-submit-button-state' in changed_id:
         person_id = lookup_data[input1]
-        df = api_collab(text=input1, method=input2)
+        df = api_collab(text=person_id, method=input2)
         return [], df.to_dict("records")
     else:
         if len(input1) < 3:
+            raise dash.exceptions.PreventUpdate
+        else:
             df_lookup = api_lookup(text=input1)
             lookup_names = df_lookup['person_name'].values()
             lookup_ids = df_lookup['pid'].values()
